@@ -1,10 +1,10 @@
-:천일문 기본 Ch.05 및 Ch.06 통합 정정 완벽판 어플리케이션:index.html
+:천일문 기본 Ch.05 & Ch.06 통합 완전 수정판 어플리케이션:index.html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chunilmoon Basic - Ch.05 & Ch.06 Integrated Master</title>
+    <title>Chunilmoon Basic - Ch.05 & Ch.06 Study Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -21,8 +21,6 @@
                 border-radius: 40px;
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
                 border: 12px solid #0f172a;
-                position: relative;
-                overflow: hidden;
             }
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -31,10 +29,10 @@
 </head>
 <body class="flex justify-center items-center min-h-screen bg-slate-900">
 
-    <div class="mobile-frame w-full h-screen sm:h-[840px] flex flex-col bg-slate-50 text-slate-800">
+    <div class="mobile-frame w-full h-screen sm:h-[840px] flex flex-col bg-slate-50 text-slate-800 relative overflow-hidden">
         
         <div class="bg-indigo-900 text-slate-300 text-xs px-6 pt-2 pb-1 flex justify-between items-center font-semibold select-none z-30 shrink-0">
-            <span>Gramva Master v1.6</span>
+            <span>Gramva Lite v1.9</span>
             <span class="text-indigo-300" id="top-chapter-indicator">CH.05 & CH.06 통합판</span>
             <div class="flex items-center gap-1">
                 <i class="fa-solid fa-signal text-[10px]"></i>
@@ -47,7 +45,7 @@
             <div class="flex justify-between items-center mb-1">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-inner">
-                        <i class="fa-solid fa-layer-group text-sm"></i>
+                        <i class="fa-solid fa-book-bookmark text-sm"></i>
                     </div>
                     <div>
                         <h2 class="text-xs text-indigo-200 font-bold uppercase tracking-wider">Chunilmoon Basic</h2>
@@ -87,58 +85,22 @@
                 <i id="bookmark-filter-icon" class="fa-regular fa-star"></i>
                 <span>보관함</span>
             </button>
-            <button id="mode-quiz-btn" onclick="switchMode('quiz')" class="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all text-xs font-bold flex items-center gap-1">
-                <i class="fa-solid fa-circle-question"></i>
-                <span>퀴즈</span>
-            </button>
         </div>
 
         <div class="flex-1 overflow-y-auto no-scrollbar relative">
             <section id="view-study" class="p-4 space-y-4 pb-20 block">
                 <div id="cards-list" class="space-y-4"></div>
             </section>
-
-            <section id="view-quiz" class="p-5 pb-20 hidden">
-                <div class="bg-white rounded-2xl p-5 shadow-md border border-slate-100 flex flex-col min-h-[450px]">
-                    <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4">
-                        <span class="text-xs font-black bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-md">실전 단원 테스트</span>
-                        <span id="quiz-count" class="text-xs font-bold text-slate-500">1/10</span>
-                    </div>
-
-                    <div class="flex-1 flex flex-col justify-center items-center py-4">
-                        <span class="text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-wider" id="quiz-unit-badge">UNIT 27</span>
-                        <div class="text-xs font-black bg-slate-100 text-slate-600 px-2 py-0.5 rounded mb-3" id="quiz-no-badge">No. 284</div>
-                        
-                        <div class="text-center text-lg font-bold text-indigo-900 leading-relaxed mb-6 select-none" id="quiz-question-english"></div>
-
-                        <button onclick="speakQuizText()" class="mb-6 w-10 h-10 rounded-full bg-slate-100 hover:bg-indigo-100 text-indigo-600 flex items-center justify-center transition-all">
-                            <i class="fa-solid fa-volume-high"></i>
-                        </button>
-
-                        <div class="w-full space-y-2.5" id="quiz-options"></div>
-                    </div>
-
-                    <div id="quiz-feedback" class="hidden mt-4 p-3 rounded-xl text-center font-bold text-xs transition-all"></div>
-
-                    <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden mt-4 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-xs shadow-md transition-all text-center">
-                        다음 문제 풀기 <i class="fa-solid fa-circle-arrow-right ml-1"></i>
-                    </button>
-                </div>
-            </section>
         </div>
 
-        <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200/80 px-6 py-3 flex justify-around items-center shrink-0 z-30 shadow-2xl">
-            <button onclick="switchMode('study')" class="flex flex-col items-center gap-1 group">
-                <i id="nav-study-icon" class="fa-solid fa-graduation-cap text-lg text-indigo-600 transition-all"></i>
-                <span id="nav-study-text" class="text-[10px] font-bold text-indigo-600 transition-all">학습 모드</span>
-            </button>
-            <button onclick="switchMode('quiz')" class="flex flex-col items-center gap-1 group">
-                <i id="nav-quiz-icon" class="fa-solid fa-gamepad text-lg text-slate-400 transition-all"></i>
-                <span id="nav-quiz-text" class="text-[10px] font-bold text-slate-400 transition-all">실전 퀴즈</span>
-            </button>
-            <button onclick="resetAllProgress()" class="flex flex-col items-center gap-1 group text-slate-400 hover:text-red-500">
-                <i class="fa-solid fa-rotate text-lg"></i>
-                <span class="text-[10px] font-bold">초기화</span>
+        <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200/80 px-6 py-3 flex justify-between items-center shrink-0 z-30 shadow-2xl">
+            <div class="flex items-center gap-1.5 text-indigo-600 font-bold text-xs select-none">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>집중 학습 모드 가동 중</span>
+            </div>
+            <button onclick="resetAllProgress()" class="flex items-center gap-1 text-slate-400 hover:text-red-500 transition-all text-[11px] font-bold">
+                <i class="fa-solid fa-rotate"></i>
+                <span>진도 초기화</span>
             </button>
         </div>
 
@@ -164,7 +126,6 @@
     </div>
 
     <script>
-        // Ch.05 시제(284~332) & Ch.06 조동사(333~394) 총 111문장 마스터 데이터베이스
         const sentencesDb = [
             // ==================== CHAPTER 05 동사의 시제 ====================
             { ch: "CH5", no: 284, unit: "UNIT 27", eng: "We live in an age of constant interaction.", struct: "We(S) + live(V) + [in an age of constant interaction](M)", grammar: "현재시제: 현재의 보편적인 상태 혹은 지속적인 속성을 가리킵니다.", words: "constant (지속적인), interaction (상호작용)", kor: "우리는 지속적인 상호작용의 시대에 살고 있다." },
@@ -185,12 +146,10 @@
             { ch: "CH5", no: 299, unit: "UNIT 28", eng: "The project is due to start on Monday and the duration will be three weeks.", struct: "The project(S1) + is due to start(V1) + and + the duration(S2) + will be(V2)", grammar: "be due to-v: '~하기로 되어 있다', '예정이다' 뜻의 구문형 미래 표현 지표입니다.", words: "due to-v (~하기로 예정된), duration (기간, 지속 기간)", kor: "그 프로젝트는 월요일에 시작할 예정이며, 그 기간은 3주일 것이다." },
             { ch: "CH5", no: 300, unit: "UNIT 29", eng: "People have wondered for centuries about life after death.", struct: "People(S) + have wondered(V) + [for centuries](M) + [about life after death](M)", grammar: "현재완료 (계속): 'for centuries'라는 긴 세월 부사구와 융합되어 과거부터 지금까지의 지속 상태를 수식합니다.", words: "wonder (궁금해하다), century (세기, 100년), life after death (사후 세계)", kor: "사람들은 사후 세계에 대해 수 세기 동안 궁금해해 왔다." },
             { ch: "CH5", no: 301, unit: "UNIT 29", eng: "We have been to Jeju Island many times.", struct: "We(S) + have been to(V) + Jeju Island(M) + [many times](M)", grammar: "현재완료 (경험): 'have been to'는 '~에 가본 적이 있다'를 정의하며 횟수 지표(many times)와 조응합니다.", words: "have been to (~에 가본 적이 있다), many times (여러 번)", kor: "우리는 제주도에 여러 번 가본 적이 있다." },
-            // [정정 완료] 누락되었던 ch: "CH5" 필드를 안전하게 탑재했습니다.
             { ch: "CH5", no: 302, unit: "UNIT 29", eng: "We have just been to Jeju Island for summer vacation.", struct: "We(S) + have [just] been to(V) + Jeju Island(M) + [for summer vacation](M)", grammar: "현재완료 (완료): 완료 힌트어 'just'와 결합하여 방금 막 다녀온 상태가 완료되었음을 뜻합니다.", words: "just (방금, 막), summer vacation (여름 휴가)", kor: "우리는 여름 휴가로 방금 제주도에 다녀왔다." },
             { ch: "CH5", no: 303, unit: "UNIT 29", eng: "South Africa has lost many natural habitats due to deforestation.", struct: "South Africa(S) + has lost(V) + many natural habitats(O) + [due to deforestation](M)", grammar: "현재완료 (결과): 과거 소실 행동으로 인해 '그 결과 현재 생태계 서식지가 소실되어 부재한 상태'임을 기술합니다.", words: "natural habitat (자연 서식지), due to (~때문에), deforestation (삼림 파괴)", kor: "남아프리카공화국은 삼림 파괴로 인해 많은 자연 서식지를 잃어버렸다." },
             { ch: "CH5", no: 304, unit: "UNIT 29", eng: "Since 1985, the company has been in its present location.", struct: "[Since 1985](M), the company(S) + has been(V) + [in its present location](M)", grammar: "현재완료 (계속): 'Since + 과거 기준연도'가 개입되어 현재완료 주절 지표의 연속성을 강제 수용합니다.", words: "since (~이래로), present (현재의), location (위치)", kor: "1985년 이래로 그 회사는 현재의 위치에 있어 왔다." },
             { ch: "CH5", no: 305, unit: "UNIT 29", eng: "It has been my lifelong dream to visit this beautiful city.", struct: "It(가S) + has been(V) + my lifelong dream(C) + [to visit...](진S)", grammar: "가주어 진주어 완료결합: 과거 오랜 시점부터 지속 축적되어 온 평생의 꿈 상태를 진술합니다.", words: "lifelong (평생의), dream (꿈), visit (방문하다)", kor: "이 아름다운 도시를 방문하는 것은 나의 평생의 꿈이었다." },
-            // [정정 완료] '미래를상상해' 오탈자를 '미래를 상상해'로 정밀 컴파일 띄어쓰기 교정 완료했습니다.
             { ch: "CH5", no: 306, unit: "UNIT 29", eng: "Have you ever imagined your future?", struct: "Have(V) + you(S) + [ever] + imagined(V') + your future(O)?", grammar: "현재완료 의문문: 경험의 유무 판별 수단어인 부사 'ever(~해 본 적이 있는가)'가 결합된 의문문 형식입니다.", words: "imagine (상상하다), future (미래)", kor: "당신은 당신의 미래를 상상해 본 적이 있습니까?" },
             { ch: "CH5", no: 307, unit: "UNIT 29", eng: "The baseball team has never won a game so far this season.", struct: "The baseball team(S) + has [never] won(V) + a game(O) + [so far...](M)", grammar: "현재완료 (경험/계속): 빈도 부정어 'never' 및 'so far'(지금까지) 지표의 복합 조화로 현재까지 달성 못한 전적 상태를 표현합니다.", words: "never (결코 ~않다), so far (지금까지)", kor: "그 야구팀은 이번 시즌 지금까지 단 한 경기도 이기지 못했다." },
             { ch: "CH5", no: 308, unit: "UNIT 29", eng: "She’s only twenty, but she’s already achieved worldwide fame.", struct: "She’s(is) only twenty, but + she’s(has) [already] achieved(V) + worldwide fame(O)", grammar: "축약어 시제 변별: 앞 절의 's는 is(현재 시제), 뒤 절의 's는 has(현재완료 완료 부사 already 호응)의 축약입니다.", words: "achieve (성취하다), worldwide (세계적인), fame (명성)", kor: "그녀는 겨우 스무 살이지만, 이미 세계적인 명성을 얻었다." },
@@ -215,7 +174,7 @@
             { ch: "CH5", no: 327, unit: "UNIT 31", eng: "He denied having made a serious mistake.", struct: "He(S) + denied(V) + {having made a serious mistake}(O)", grammar: "완료 동명사: 과실 사실 부인(denied: 과거) 행동 기준, 기정 가해 행동이 선행된 과거 사건이므로 타동사 목적어로 having p.p.를 배치합니다.", words: "deny (부인하다), serious (심각한), mistake (실수)", kor: "그는 심각한 실수를 저질렀던 것을 부인했다." },
             { ch: "CH5", no: 328, unit: "UNIT 31", eng: "A farmer claimed to have seen a UFO in the sky.", struct: "A farmer(S) + claimed(V) + {to have seen...}(O)", grammar: "완료 부정사 목적어: 주장 행동(claimed: 과거) 대비, 미확인 물체 상공 포착 사건이 선행된 대과거 사건이므로 완료형 부정사 명사 목적어구를 도출합니다.", words: "claim (주장하다), sky (하늘)", kor: "한 농부는 하늘에서 UFO를 보았었다고 주장했다." },
             { ch: "CH5", no: 329, unit: "UNIT 31", eng: "It was helpful to have reviewed the book before I attended the history class.", struct: "It(가S) + was(V) + helpful(C) + {to have reviewed...}(진S)", grammar: "완료 부정사 진주어: 이점을 획득한 과거 판단점(was) 대비 서적 복습 실천이 시기상 명확히 선행되었으므로 진주어로 완료 부정사를 기치합니다.", words: "helpful (도움이 되는), review (복습하다), attend (참석하다)", kor: "내가 역사 수업에 참석하기 전에 그 책을 복습해 두었던 것은 도움이 되었다." },
-            { ch: "CH5", no: 330, unit: "UNIT 31", eng: "Having failed once doesn’t mean that you’re going to fail at everything.", struct: "{Having failed once}(S) + doesn’t mean(V) + [that...](O)", grammar: "완료 동명사구 주어: 정의 내리는 현실 주절(doesn't mean: 현재) 대비 과거 실패 전력을 주어로 이끌었기에 동명사 완료형 Having failed가 도출되며 단수 처리합니다.", words: "fail (실패하다), mean (의미하다), everything (모든 것)", kor: "한 번 실패했었다는 것이 당신이 모든 일에 실패할 것이라는 것을 의미하지는 않는다." },
+            { ch: "CH5", no: 330, unit: "UNIT 31", eng: "Having failed once doesn’t mean that you’re going to fail at everything.", struct: "{Having failed once}(S) + doesn’t mean(V) + [that...](O)", grammar: "완료 동명사구 주어: 정의 내리는 현실 주절(doesn't mean: 현재) 대비 과거 실패 전력을 주어로 이끌었기에 동명사 완료형 Having failed가 도출되며 단수 처리합니다.", words: "fail (실패하다), mean (意味하다), everything (모든 것)", kor: "한 번 실패했었다는 것이 당신이 모든 일에 실패할 것이라는 것을 의미하지는 않는다." },
             { ch: "CH5", no: 331, unit: "UNIT 31", eng: "I’m pretty proud of having completed a marathon myself.", struct: "I(S) + ’m proud of(V) + {having completed a marathon}(O)", grammar: "완료 동명사 목적어: 자랑스러운 자부심은 '현재(am)'이나 마라톤을 완주한 고행은 '과거'. 전치사 of의 목적어 시차가 확정되어 having p.p.를 수용합니다.", words: "pretty (꽤), proud of (~을 자랑스러워하는), complete (완주하다), myself (스스로)", kor: "나는 마라톤을 스스로 완주해냈던 것이 꽤 자랑스럽다." },
             { ch: "CH5", no: 332, unit: "UNIT 31", eng: "John Bardeen is the only scientist to have received two Nobel Prizes in the Physics category.", struct: "John Bardeen(S) + is(V) + the only scientist(C) + [to have received...](M)", grammar: "형용사적 완료부정사: 불멸의 영예인 과학자로 현재 등재된 위상(is: 현재) 기준, 과거 노벨상 수상의 역사적 실적 수식을 위해 to have received 형용사적 용법을 구사합니다.", words: "scientist (과학자), receive (수상하다), physics (물리학), category (부문)", kor: "존 바딘은 물리학 부문에서 두 개의 노벨상을 받았던 유일한 과학자이다." },
 
@@ -253,7 +212,6 @@
             { ch: "CH6", no: 363, unit: "UNIT 35", eng: "A comet may not have caused the extinction of the dinosaurs. There is no authentic proof of it.", struct: "A comet(S) + may not have caused(V) + the extinction... There + is(V) + no authentic proof(S)", grammar: "may not have p.p.: 과거에 유발된 사건에 대한 소극적 부정 추측(~하지 않았을지도 모른다)의 문맥을 방어합니다.", words: "comet (혜성), cause (야기하다), extinction (멸종), dinosaur (공룡), authentic (확실한), proof (증거)", kor: "혜성이 공룡의 멸종을 야기하지 않았을지도 모른다. 그것에 대한 확실한 증거는 없다." },
             { ch: "CH6", no: 364, unit: "UNIT 35", eng: "He was very young then. Dealing with the sudden fame could have been difficult for him.", struct: "He(S) + was(V) ... {Dealing with the sudden fame}(S) + could have been(V) + difficult(C)", grammar: "could have p.p. 과거 가능성 & 동명사 주어: 과거 시점 상황에 비추어 볼 때 '충분히 그런 잠재 가능성이 성립했었다'를 역설하는 동명사구 주어절입니다.", words: "deal with (~을 다루다), sudden (갑작스러운), fame (명성)", kor: "그는 그때 매우 어렸다. 갑작스러운 명성에 대처하는 것은 그에게 어려웠을 수도 있다." },
             { ch: "CH6", no: 365, unit: "UNIT 35", eng: "The exam was quite difficult. Susan cannot have gotten a perfect score.", struct: "The exam(S) + was(V) ... Susan(S) + cannot have gotten(V) + a perfect score(O)", grammar: "cannot have p.p. 과거 부정확신: 과거에 '결코 그런 대형 사건이 일어났을 리가 만무하다'를 논리적으로 못 박는 강경한 과거 추측입니다.", words: "quite (꽤), perfect score (만점)", kor: "시험이 꽤 어려웠다. 수잔이 만점을 받았을 리가 없다." },
-            // [정정 완료] 검토 과정에서 발견된 '나는 기' 한글 타이핑 오류를 '날기'로 신속히 교정 고정했습니다.
             { ch: "CH6", no: 366, unit: "UNIT 35", eng: "Some small dinosaurs that did not fly had feathers. The feathers might have been for keeping warm, but not for flying.", struct: "Some small dinosaurs [that did not fly](S) + had(V) + feathers(O). The feathers(S) + might have been(V) ...", grammar: "might have p.p. 추측 & 동명사 병렬: 과거의 희박한 추측 형성이며 전치사 for 이하에 명사형 동명사 수식구 2개가 대조 병렬 배치되었습니다.", words: "feather (깃털), keep warm (따뜻하게 유지하다)", kor: "날지 못했던 몇몇 작은 공룡들은 깃털을 가지고 있었다. 그 깃털들은 보온을 위한 것이었을지도 모른다, 날기 위한 것이 아니라." },
             { ch: "CH6", no: 367, unit: "UNIT 35", eng: "Your application is too late. You should have submitted it the day before yesterday.", struct: "Your application(S) + is(V) ... You(S) + should have submitted(V) + it(O) [the day before yesterday](M)", grammar: "should have p.p. 타인 비판형 후회: 과거에 미실행하여 무산된 사안에 관한 강인한 유감, 비토 후회(~했어야만 했다)를 소환하는 변별력 최상위 문법입니다.", words: "application (지원서), submit (제출하다), the day before yesterday (그저께)", kor: "당신의 지원서는 너무 늦었다. 당신은 그것을 그저께 제출했어야만 했다." },
             { ch: "CH6", no: 368, unit: "UNIT 35", eng: "I was late for school this morning. I should have checked the bus schedule in advance.", struct: "I(S) + was(V) ... I(S) + should have checked(V) + the bus schedule(O) [in advance](M)", grammar: "should have p.p. 1인칭 자가 후회: 화자 본인이 과거 이행 못한 행동선에 관하여 통탄하거나 뉘우치는 기류를 발산합니다.", words: "late for (~에 늦은), schedule (시간표), in advance (미리, 사전에)", kor: "나는 오늘 아침에 학교에 지각했다. 나는 버스 시간표를 미리 확인했어야만 했다." },
@@ -285,19 +243,14 @@
             { ch: "CH6", no: 394, unit: "UNIT 37", eng: "I would like to give you some useful tips on how to learn efficiently.", struct: "I(S) + would like to give(V) + you(O1) + some useful tips(O2) + [on how to learn...](M)", grammar: "would like to 소망 & 4형식 & 의문사구: 수여동사 give의 간접 목적어 직접 목적어 4형식 축 뒤에 명사구 [how + to부정사](~하는 방법)가 유도 결합되었습니다.", words: "useful (유용한), tip (조언), efficiently (효율적으로), learn (배우다)", kor: "나는 당신에게 효율적으로 배우는 방법에 대한 몇 가지 유용한 조언을 드리고 싶습니다." }
         ];
 
-        // 글로벌 코어 상징자 세션
         let currentChSelection = "CH5"; 
         let currentTab = "ALL";
-        let activeMode = "study";
         let searchQuery = "";
         let filterOnlyBookmarks = false;
         
         let checkedCompleted = JSON.parse(localStorage.getItem('gramva_completed_v4')) || [];
         let bookmarkedList = JSON.parse(localStorage.getItem('gramva_bookmarks_v4')) || [];
         let writingNotes = JSON.parse(localStorage.getItem('gramva_notes_v4')) || {};
-
-        let currentQuizIndex = 0;
-        let quizQuestions = [];
         let modalConfirmCallback = null;
 
         window.onload = function() {
@@ -310,7 +263,6 @@
             currentChSelection = chCode;
             currentTab = "ALL"; 
             rebuildNavigationTabs();
-            if (activeMode !== "study") switchMode("study");
             renderCards();
         }
 
@@ -331,7 +283,6 @@
                 button.innerText = unit === "ALL" ? "전체 목록" : unit;
                 button.onclick = () => {
                     currentTab = unit;
-                    if (activeMode !== "study") switchMode("study");
                     rebuildNavigationTabs();
                     renderCards();
                 };
@@ -535,120 +486,6 @@
             document.getElementById("progress-bar-fill").style.width = `${percent}%`;
         }
 
-        function switchMode(mode) {
-            activeMode = mode;
-            const viewStudy = document.getElementById("view-study");
-            const viewQuiz = document.getElementById("view-quiz");
-            const navStudyIcon = document.getElementById("nav-study-icon");
-            const navStudyText = document.getElementById("nav-study-text");
-            const navQuizIcon = document.getElementById("nav-quiz-icon");
-            const navQuizText = document.getElementById("nav-quiz-text");
-
-            if (mode === "study") {
-                viewStudy.classList.remove("hidden");
-                viewQuiz.classList.add("hidden");
-                navStudyIcon.className = "fa-solid fa-graduation-cap text-lg text-indigo-600";
-                navStudyText.className = "text-[10px] font-bold text-indigo-600";
-                navQuizIcon.className = "fa-solid fa-gamepad text-lg text-slate-400";
-                navQuizText.className = "text-[10px] font-bold text-slate-400";
-                renderCards();
-            } else if (mode === "quiz") {
-                viewStudy.classList.add("hidden");
-                viewQuiz.classList.remove("hidden");
-                navStudyIcon.className = "fa-solid fa-graduation-cap text-lg text-slate-400";
-                navStudyText.className = "text-[10px] font-bold text-slate-400";
-                navQuizIcon.className = "fa-solid fa-gamepad text-lg text-indigo-600";
-                navQuizText.className = "text-[10px] font-bold text-indigo-600";
-                startQuizSession();
-            }
-        }
-
-        function startQuizSession() {
-            currentQuizIndex = 0;
-            let pool = sentencesDb.filter(s => s.ch === currentChSelection);
-            if (currentTab !== "ALL") {
-                pool = pool.filter(i => i.unit === currentTab);
-            }
-
-            quizQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, 10);
-            if (quizQuestions.length < 4) {
-                quizQuestions = sentencesDb.filter(s => s.ch === currentChSelection).sort(() => 0.5 - Math.random()).slice(0, 10);
-                showModal("출제 풀 확장", "해당 단원의 문장 개수가 소량이어서 챕터 전체 문장 중 무작위 엄선으로 테스트가 대체 구성되었습니다.", "fa-circle-info");
-            }
-            loadQuizQuestion();
-        }
-
-        function loadQuizQuestion() {
-            const currentQ = quizQuestions[currentQuizIndex];
-            
-            document.getElementById("quiz-count").innerText = `${currentQuizIndex + 1}/${quizQuestions.length}`;
-            document.getElementById("quiz-unit-badge").innerText = currentQ.unit;
-            document.getElementById("quiz-no-badge").innerText = `No. ${currentQ.no}`;
-            document.getElementById("quiz-question-english").innerText = currentQ.eng;
-
-            document.getElementById("quiz-feedback").className = "hidden mt-4 p-3 rounded-xl text-center font-bold text-xs";
-            document.getElementById("quiz-next-btn").classList.add("hidden");
-
-            const correctKor = currentQ.kor;
-            
-            const wrongs = sentencesDb
-                .filter(i => i.ch === currentChSelection && i.no !== currentQ.no)
-                .sort(() => 0.5 - Math.random())
-                .slice(0, 3)
-                .map(i => i.kor);
-
-            const options = [correctKor, ...wrongs].sort(() => 0.5 - Math.random());
-            const optionsContainer = document.getElementById("quiz-options");
-            optionsContainer.innerHTML = "";
-
-            options.forEach(opt => {
-                const button = document.createElement("button");
-                button.className = "w-full text-left p-3.5 bg-slate-50 hover:bg-indigo-50/50 border border-slate-200 hover:border-indigo-200 rounded-xl text-xs font-semibold leading-relaxed transition-all active:scale-[0.99] quiz-opt-btn";
-                button.innerText = opt;
-                button.onclick = () => selectQuizOption(button, opt, correctKor);
-                optionsContainer.appendChild(button);
-            });
-        }
-
-        function selectQuizOption(selectedBtn, chosenText, correctText) {
-            const chess = document.querySelectorAll(".quiz-opt-btn");
-            chess.forEach(btn => {
-                btn.disabled = true;
-                if (btn.innerText === correctText) {
-                    btn.classList.add("bg-emerald-50", "border-emerald-300", "text-emerald-700");
-                }
-            });
-
-            const feedback = document.getElementById("quiz-feedback");
-            feedback.classList.remove("hidden");
-
-            if (chosenText === correctText) {
-                selectedBtn.classList.add("bg-emerald-50", "border-emerald-500", "text-emerald-700");
-                feedback.innerText = "🎉 정답입니다! 아주 훌륭한 구문 해석력입니다.";
-                feedback.className = "block mt-4 p-3 rounded-xl text-center font-bold text-xs bg-emerald-100 text-emerald-800 border border-emerald-200";
-            } else {
-                selectedBtn.classList.add("bg-red-50", "border-red-400", "text-red-700");
-                feedback.innerText = "😅 틀렸습니다. 오답 카드의 어휘 분석창을 재확인하세요.";
-                feedback.className = "block mt-4 p-3 rounded-xl text-center font-bold text-xs bg-red-100 text-red-800 border border-red-200";
-            }
-            document.getElementById("quiz-next-btn").classList.remove("hidden");
-        }
-
-        function speakQuizText() {
-            const currentQ = quizQuestions[currentQuizIndex];
-            speakText(currentQ.no);
-        }
-
-        function nextQuizQuestion() {
-            if (currentQuizIndex < quizQuestions.length - 1) {
-                currentQuizIndex++;
-                loadQuizQuestion();
-            } else {
-                showModal("단원 정복 완료", "축하합니다! 무작위 10문항 해석 검정 퀴즈를 모두 완료하였습니다.", "fa-circle-check");
-                switchMode("study");
-            }
-        }
-
         function showCustomConfirm(title, msg, onConfirm) {
             document.getElementById("modal-title").innerText = title;
             document.getElementById("modal-message").innerText = msg;
@@ -676,12 +513,13 @@
             document.getElementById("custom-modal").classList.remove("hidden");
         }
 
+        // [수정 완료] confirmBtn 클래스를 하드코딩 w-full 대신 반응형 그리드 구조에 호응하는 flex-1 레이아웃 규격으로 완벽 교정
         function closeModal() {
             document.getElementById("custom-modal").classList.add("hidden");
             document.getElementById("modal-cancel-btn").classList.add("hidden");
             
             const confirmBtn = document.getElementById("modal-confirm-btn");
-            confirmBtn.className = "w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition-all";
+            confirmBtn.className = "flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition-all";
             confirmBtn.innerText = "확인";
             confirmBtn.onclick = closeModal;
             modalConfirmCallback = null;
