@@ -1,10 +1,10 @@
-:천일문 기본 Chapter 05 완전판 어플리케이션:index.html
+:천일문 기본 Ch.05 및 Ch.06 통합 정정 완벽판 어플리케이션:index.html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chunilmoon Basic - Chapter 05 Master</title>
+    <title>Chunilmoon Basic - Ch.05 & Ch.06 Integrated Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -34,8 +34,8 @@
     <div class="mobile-frame w-full h-screen sm:h-[840px] flex flex-col bg-slate-50 text-slate-800">
         
         <div class="bg-indigo-900 text-slate-300 text-xs px-6 pt-2 pb-1 flex justify-between items-center font-semibold select-none z-30 shrink-0">
-            <span>Gramva Engine 1.2</span>
-            <span class="text-indigo-300">CHAPTER 05 동사의 시제</span>
+            <span>Gramva Master v1.6</span>
+            <span class="text-indigo-300" id="top-chapter-indicator">CH.05 & CH.06 통합판</span>
             <div class="flex items-center gap-1">
                 <i class="fa-solid fa-signal text-[10px]"></i>
                 <i class="fa-solid fa-wifi text-[10px]"></i>
@@ -47,22 +47,25 @@
             <div class="flex justify-between items-center mb-1">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-inner">
-                        <i class="fa-solid fa-book-open text-sm"></i>
+                        <i class="fa-solid fa-layer-group text-sm"></i>
                     </div>
                     <div>
                         <h2 class="text-xs text-indigo-200 font-bold uppercase tracking-wider">Chunilmoon Basic</h2>
-                        <h1 class="text-base font-extrabold tracking-tight">Ch.05 동사의 시제</h1>
+                        <select id="chapter-selector" onchange="changeChapter(this.value)" class="bg-indigo-700 font-extrabold text-base text-white outline-none border-none rounded px-1 py-0.5 cursor-pointer focus:ring-2 focus:ring-indigo-400">
+                            <option value="CH5">CHAPTER 05 동사의 시제</option>
+                            <option value="CH6">CHAPTER 06 조동사</option>
+                        </select>
                     </div>
                 </div>
                 <div class="bg-indigo-950/50 backdrop-blur-sm border border-indigo-700/50 px-3 py-1.5 rounded-full flex items-center gap-2">
                     <i class="fa-solid fa-star text-amber-400 text-xs"></i>
-                    <span id="global-badge-stats" class="text-xs font-bold text-slate-100">0/49</span>
+                    <span id="global-badge-stats" class="text-xs font-bold text-slate-100">0/111</span>
                 </div>
             </div>
 
             <div class="mt-3">
                 <div class="flex justify-between text-[10px] text-indigo-200 font-bold mb-1">
-                    <span>전체 시제 정복률</span>
+                    <span>전체 교육과정 목표 정복률</span>
                     <span id="progress-percent">0%</span>
                 </div>
                 <div class="w-full bg-indigo-950 rounded-full h-2 overflow-hidden shadow-inner">
@@ -78,7 +81,7 @@
         <div class="bg-white px-4 py-2 border-b border-slate-200 shrink-0 flex items-center gap-2">
             <div class="relative flex-1">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                <input type="text" id="search-input" placeholder="문장 영어/한국어 검색..." class="w-full pl-8 pr-3 py-1.5 bg-slate-100 border-none rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                <input type="text" id="search-input" placeholder="문장 검색 (영어 또는 한글)..." class="w-full pl-8 pr-3 py-1.5 bg-slate-100 border-none rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
             </div>
             <button id="bookmark-filter-btn" onclick="toggleBookmarkFilter()" class="p-2 bg-slate-100 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all text-xs flex items-center gap-1 font-bold">
                 <i id="bookmark-filter-icon" class="fa-regular fa-star"></i>
@@ -98,7 +101,7 @@
             <section id="view-quiz" class="p-5 pb-20 hidden">
                 <div class="bg-white rounded-2xl p-5 shadow-md border border-slate-100 flex flex-col min-h-[450px]">
                     <div class="flex justify-between items-center pb-3 border-b border-slate-100 mb-4">
-                        <span class="text-xs font-black bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-md">실전 해석 퀴즈</span>
+                        <span class="text-xs font-black bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-md">실전 단원 테스트</span>
                         <span id="quiz-count" class="text-xs font-bold text-slate-500">1/10</span>
                     </div>
 
@@ -161,94 +164,164 @@
     </div>
 
     <script>
-        // Chapter 05 49문장 전체 정밀 수록 완료
+        // Ch.05 시제(284~332) & Ch.06 조동사(333~394) 총 111문장 마스터 데이터베이스
         const sentencesDb = [
-            // UNIT 27
-            { no: 284, unit: "UNIT 27", eng: "We live in an age of constant interaction.", struct: "We(S) + live(V) + [in an age of constant interaction](M)", grammar: "현재시제: 현재의 보편적인 주위 상태를 서술합니다.", words: "constant (끊임없는), interaction (상호작용)", kor: "우리는 끊임없는 상호작용의 시대에 살고 있다." },
-            { no: 285, unit: "UNIT 27", eng: "He goes hiking every Saturday.", struct: "He(S) + goes hiking(V) + [every Saturday](M)", grammar: "현재시제: 규칙적으로 반복되는 습관 표현. go -ing는 '~하러 가다'의 뜻입니다.", words: "go hiking (등산 가다), every Saturday (토요일마다)", kor: "그는 토요일마다 등산을 간다." },
-            { no: 286, unit: "UNIT 27", eng: "Most planets rotate in an anticlockwise direction.", struct: "Most planets(S) + rotate(V) + [in an anticlockwise direction](M)", grammar: "현재시제: 과학적 진리, 자연 법칙을 상술할 때는 항시 현재형입니다.", words: "planet (행성), rotate (자전하다, 회전하다), anticlockwise (반시계 방향의)", kor: "대부분의 행성은 반시계 방향으로 자전한다." },
-            { no: 287, unit: "UNIT 27", eng: "Vegetarians stay away from meat, including chicken and fish.", struct: "Vegetarians(S) + stay away from(V) + meat(O) + [including chicken and fish](M)", grammar: "현재시제: 일반적인 사실 진술. including은 전치사화된 현재분사구입니다.", words: "vegetarian (채식주의자), stay away from (~을 멀리하다), including (~을 포함하여)", kor: "채식주의자들은 닭고기와 생선을 포함한 고기를 멀리한다." },
-            { no: 288, unit: "UNIT 27", eng: "The new subway line opens next month.", struct: "The new subway line(S) + opens(V) + [next month](M)", grammar: "현재시제 대용: 공적으로 예정되어 확정된 미래 일정(스케줄)을 대변합니다.", words: "subway line (지하철 노선), open (개통하다)", kor: "새 지하철 노선은 다음 달에 개통한다." },
-            { no: 289, unit: "UNIT 27", eng: "When you do common things in an uncommon way, you will get the attention of the world.", struct: "[When you(S) do(V) common things(O) in an uncommon way](시간부사절), you(S) + will get(V) + the attention(O)", grammar: "시간/조건 부사절: 시간의 부사절(When) 안에서는 미래시점일지라도 조동사 will 대신 현재시제(do)를 대용합니다.", words: "common (평범한), uncommon (비범한), attention (주목, 관심)", kor: "당신이 평범한 일들을 비범한 방식으로 할 때, 당신은 세상의 관심을 얻게 될 것이다." },
-            { no: 290, unit: "UNIT 27", eng: "If you don’t go through hardships, you won‘t know how strong you are.", struct: "[If you(S) don’t go through(V) hardships(O)](조건부사절), you(S) + won‘t know(V) + [how strong(의) you(S') are(V')](O)", grammar: "시간/조건 부사절 & 간접의문문: 조건절 내부 현재시제 대용(don't go through) 및 know의 목적어로 사용된 [의+주+동] 어순의 간접의문문입니다.", words: "go through (겪다, 경험하다), hardship (고난, 역경)", kor: "만약 당신이 고난을 겪지 않는다면, 당신은 당신이 얼마나 강한지 알지 못할 것이다." },
-            { no: 291, unit: "UNIT 27", eng: "As soon as you start to pursue a dream, everything in your life will have meaning.", struct: "[As soon as you(S) start(V) {to pursue a dream}(O)](시간부사절), everything [in your life](S) + will have(V) + meaning(O)", grammar: "시간/조건 부사절: '~하자마자'를 뜻하는 시간 부사절 접속사 As soon as 뒤에 현재시제(start)가 위치합니다.", words: "as soon as (~하자마자), pursue (추구하다), meaning (의미)", kor: "당신이 꿈을 추구하기 시작하자마자, 당신 삶의 모든 것은 의미를 갖게 될 것이다." },
-            
-            // UNIT 28
-            { no: 292, unit: "UNIT 28", eng: "Respect yourself and others will respect you.", struct: "Respect(V) yourself(O) + and(접) + others(S) + will respect(V) + you(O)", grammar: "명령문 + and: '~해라, 그러면 ...할 것이다'의 양식으로 미래 예측 조건절을 대신합니다.", words: "respect (존중하다), yourself (너 자신)", kor: "너 자신을 존중해라, 그러면 다른 사람들도 너를 존중할 것이다." },
-            { no: 293, unit: "UNIT 28", eng: "The successful man will profit from his mistakes and try again in a different way.", struct: "The successful man(S) + will profit(V1) + and + try(V2)", grammar: "미래 조동사 병렬: 조동사 'will' 뒤에 동사원형인 profit과 try가 등위접속사 and로 결합되어 있습니다.", words: "successful (성공적인), profit from (~으로부터 이득을 얻다), different (다른)", kor: "성공하는 사람은 자신의 실수로부터 배울 것이고 다른 방식으로 다시 시도할 것이다." },
-            { no: 294, unit: "UNIT 28", eng: "This week I’m going to concentrate on schoolwork that I need to catch up on.", struct: "I(S) + ’m going to concentrate on(V) + schoolwork(O) + [that(목.관) I need to catch up on](M)", grammar: "be going to 미래 & 관계사: 주관적 계획 미래 표현. 전치사 on의 목적어가 유실되어 목적격 관계대명사 that이 유도되었습니다.", words: "concentrate on (~에 집중하다), schoolwork (학업), catch up on (~을 따라잡다)", kor: "이번 주에 나는 내가 따라잡아야 할 학업에 집중할 예정이다." },
-            { no: 295, unit: "UNIT 28", eng: "We are moving to a new place tomorrow.", struct: "We(S) + are moving(V) + [to a new place](M) [tomorrow](M)", grammar: "현재진행형의 미래 대용: 확정형 미래 부사(tomorrow)와 복합 작용하여 가까운 미래의 이사 일정을 확정 표기합니다.", words: "move (이사하다), place (장소)", kor: "우리는 내일 새로운 곳으로 이사할 것이다." },
-            { no: 296, unit: "UNIT 28", eng: "A lot of people give up just before they’re about to achieve success.", struct: "A lot of people(S) + give up(V) + [just before they’re about to achieve success](M)", grammar: "be about to-v: '막 ~하려는 참이다'라는 바로 직전의 미래 시점을 긴박하게 묘사합니다.", words: "give up (포기하다), be about to (~막 하려고 하다), achieve (성취하다), success (성공)", kor: "많은 사람들이 그들이 막 성공을 이루어내기 직전에 포기한다." },
-            { no: 297, unit: "UNIT 28", eng: "She was on the point of leaving when he finally arrived.", struct: "She(S) + was on the point of leaving(V) + [when he finally arrived](M)", grammar: "be on the point of -ing: 'be about to'와 대동소이하게 '막 ~하려는 찰나이다'를 유도하는 구문 시제입니다.", words: "on the point of (~하려던 찰나에), leave (떠나다), finally (마침내)", kor: "그가 마침내 도착했을 때 그녀는 막 떠나려던 참이었다." },
-            { no: 298, unit: "UNIT 28", eng: "The plane for Toronto is to take off within 30 minutes.", struct: "The plane [for Toronto](S) + is to take off(V) + [within 30 minutes](M)", grammar: "be to 용법: 여기서는 공적인 스케줄에 따른 '미래의 예정' 상황을 전달하고 있습니다.", words: "take off (이륙하다), within (~이내에)", kor: "토론토행 비행기는 30분 이내에 이륙할 예정이다." },
-            { no: 299, unit: "UNIT 28", eng: "The project is due to start on Monday and the duration will be three weeks.", struct: "The project(S1) + is due to start(V1) + and + the duration(S2) + will be(V2)", grammar: "be due to-v: '~할 예정이다'라는 고정 일정을 표명하는 시제 대용 숙어구입니다.", words: "due to-v (~할 예정인), duration (기간)", kor: "그 프로젝트는 월요일에 시작할 예정이며, 기간은 3주일 것이다." },
+            // ==================== CHAPTER 05 동사의 시제 ====================
+            { ch: "CH5", no: 284, unit: "UNIT 27", eng: "We live in an age of constant interaction.", struct: "We(S) + live(V) + [in an age of constant interaction](M)", grammar: "현재시제: 현재의 보편적인 상태 혹은 지속적인 속성을 가리킵니다.", words: "constant (지속적인), interaction (상호작용)", kor: "우리는 지속적인 상호작용의 시대에 살고 있다." },
+            { ch: "CH5", no: 285, unit: "UNIT 27", eng: "He goes hiking every Saturday.", struct: "He(S) + goes hiking(V) + [every Saturday](M)", grammar: "현재시제: 반복되는 현재의 습관적 동작을 묘사합니다. go -ing는 '~하러 가다'의 뜻입니다.", words: "go hiking (하이킹 가다), every Saturday (토요일마다)", kor: "그는 토요일마다 하이킹을 간다." },
+            { ch: "CH5", no: 286, unit: "UNIT 27", eng: "Most planets rotate in an anticlockwise direction.", struct: "Most planets(S) + rotate(V) + [in an anticlockwise direction](M)", grammar: "현재시제: 과학적 사실이나 불변의 진리를 명시할 때는 항시 현재시제를 준수합니다.", words: "rotate (자전하다, 회전하다), anticlockwise (반시계 방향의), direction (방향)", kor: "대부분의 행성은 반시계 방향으로 자전[회전]한다." },
+            { ch: "CH5", no: 287, unit: "UNIT 27", eng: "Vegetarians stay away from meat, including chicken and fish.", struct: "Vegetarians(S) + stay away from(V) + meat(O) + [including chicken and fish](M)", grammar: "현재시제: 일반적 보편 사실 서술. including은 독립 전치사화된 현재분사입니다.", words: "vegetarian (채식주의자), stay away from (~을 멀리하다), including (~을 포함하여)", kor: "채식주의자들은 닭고기와 생선을 포함하여 고기를 멀리한다." },
+            { ch: "CH5", no: 288, unit: "UNIT 27", eng: "The new subway line opens next month.", struct: "The new subway line(S) + opens(V) + [next month](M)", grammar: "현재시제 대용: 공정표, 공적 시간표 등에 의거해 이미 확정되어 있는 미래를 서술합니다.", words: "subway line (지하철 노선), open (개통하다, 열다)", kor: "새 지하철 노선은 다음 달에 개통한다." },
+            { ch: "CH5", no: 289, unit: "UNIT 27", eng: "When you do common things in an uncommon way, you will get the attention of the world.", struct: "[When you(S) do(V) common things(O) in an uncommon way](시간부사절), you(S) + will get(V) + the attention(O) [of the world](M)", grammar: "시간의 부사절: 'When'이 이끄는 부사절 내부에서는 미래 시점이라도 조동사 will 대신 현재형 do를 씁니다.", words: "common (평범한), uncommon (비범한, 특별한), attention (관심, 주목)", kor: "당신이 평범한 일들을 비범한 방식으로 할 때, 당신은 세상의 관심을 받게 될 것이다." },
+            { ch: "CH5", no: 290, unit: "UNIT 27", eng: "If you don’t go through hardships, you won‘t know how strong you are.", struct: "[If you(S) don’t go through(V) hardships(O)](조건부사절), you(S) + won‘t know(V) + [how strong(의) you(S') are(V')](O)", grammar: "조건의 부사절 & 간접의문문: 조건절 내 현재형 미래 대용(don't go through) 및 know의 목적어절인 [의+주+동] 어순의 간접의문문 결합입니다.", words: "go through (겪다, 경험하다), hardship (고난, 역경)", kor: "만약 당신이 고난을 겪지 않는다면, 당신은 당신이 얼마나 강한지 알지 못할 것이다." },
+            { ch: "CH5", no: 291, unit: "UNIT 27", eng: "As soon as you start to pursue a dream, everything in your life will have meaning.", struct: "[As soon as you(S) start(V) {to pursue a dream}(O)](시간부사절), everything [in your life](S) + will have(V) + meaning(O)", grammar: "시간의 부사절: '~하자마자'를 뜻하는 As soon as 부사절 규칙에 따라 현재시제 start가 위치하며 목적어로 to부정사를 취합니다.", words: "as soon as (~하자마자), pursue (추구하다), meaning (의미)", kor: "당신이 꿈을 추구하기 시작하자마자, 당신 삶의 모든 것은 의미를 갖게 될 것이다." },
+            { ch: "CH5", no: 292, unit: "UNIT 28", eng: "Respect yourself and others will respect you.", struct: "Respect(V) yourself(O) + and(접) + others(S) + will respect(V) + you(O)", grammar: "명령문 + and: '~해라, 그러면 ...할 것이다' 구조로 미래 상황에 대한 조건과 결과를 대변합니다.", words: "respect (존중하다), yourself (너 자신)", kor: "너 자신을 존중해라, 그러면 다른 사람들도 너를 존중할 것이다." },
+            { ch: "CH5", no: 293, unit: "UNIT 28", eng: "The successful man will profit from his mistakes and try again in a different way.", struct: "The successful man(S) + will profit(V1) [from his mistakes] + and(접) + [will] try(V2) [again] [in a different way]", grammar: "조동사 병렬 구조: 미래 조동사 'will' 뒤에 동사원형 profit과 try가 등위접속사 and로 연결되어 있습니다.", words: "successful (성공적인), profit from (~으로부터 이득을 얻다), different (다른)", kor: "성공하는 사람은 자신의 실수로부터 배울 것이고 다른 방식으로 다시 시도할 것이다." },
+            { ch: "CH5", no: 294, unit: "UNIT 28", eng: "This week I’m going to concentrate on schoolwork that I need to catch up on.", struct: "I(S) + ’m going to concentrate on(V) + schoolwork(O) + [that(목.관) I need to catch up on](M)", grammar: "be going to 미래 & 관계사: 주관적으로 설정된 미래 계획을 뜻하며, 전치사 on 뒤 목적어가 생략되어 목적격 관계사가 유도되었습니다.", words: "concentrate on (~에 집중하다), schoolwork (학업, 학교 공부), catch up on (~을 따라잡다)", kor: "이번 주에 나는 내가 따라잡아야 할 학교 공부에 집중할 예정이다." },
+            { ch: "CH5", no: 295, unit: "UNIT 28", eng: "We are moving to a new place tomorrow.", struct: "We(S) + are moving(V) + [to a new place](M) [tomorrow](M)", grammar: "현재진행형의 미래 대용: 미래 시간 부사(tomorrow)와 복합 작용하여 확정 상태인 가까운 미래 이사를 나타냅니다.", words: "move (이사하다, 이동하다), place (장소)", kor: "우리는 내일 새로운 곳으로 이사할 것이다." },
+            { ch: "CH5", no: 296, unit: "UNIT 28", eng: "A lot of people give up just before they’re about to achieve success.", struct: "A lot of people(S) + give up(V) + [just before they’re about to achieve success](M)", grammar: "be about to-v: '막 ~하려는 참이다'라는 바로 직전의 임박한 미래 선상을 동적 기류로 포착합니다.", words: "give up (포기하다), be about to (~막 하려고 하다), achieve (성취하다), success (성공)", kor: "많은 사람들이 그들이 막 성공을 성취하기 직전에 포기한다." },
+            { ch: "CH5", no: 297, unit: "UNIT 28", eng: "She was on the point of leaving when he finally arrived.", struct: "She(S) + was on the point of leaving(V) + [when he finally arrived](M)", grammar: "be on the point of -ing: 'be about to' 구문과 유사한 성격으로 '막 ~하려던 찰나이다'를 유도합니다.", words: "on the point of (~하려던 참인), leave (떠나다), finally (마침내), arrive (도착하다)", kor: "그가 마침내 도착했을 때 그녀는 막 떠나려던 참이었다." },
+            { ch: "CH5", no: 298, unit: "UNIT 28", eng: "The plane for Toronto is to take off within 30 minutes.", struct: "The plane [for Toronto](S) + is to take off(V) + [within 30 minutes](M)", grammar: "be to 용법: 가까운 시점에 실현될 공적 일정을 가리키는 '미래의 예정' 상황입니다.", words: "take off (이륙하다), within (~이내에)", kor: "토론토행 비행기는 30분 이내에 이륙할 예정이다." },
+            { ch: "CH5", no: 299, unit: "UNIT 28", eng: "The project is due to start on Monday and the duration will be three weeks.", struct: "The project(S1) + is due to start(V1) + and + the duration(S2) + will be(V2)", grammar: "be due to-v: '~하기로 되어 있다', '예정이다' 뜻의 구문형 미래 표현 지표입니다.", words: "due to-v (~하기로 예정된), duration (기간, 지속 기간)", kor: "그 프로젝트는 월요일에 시작할 예정이며, 그 기간은 3주일 것이다." },
+            { ch: "CH5", no: 300, unit: "UNIT 29", eng: "People have wondered for centuries about life after death.", struct: "People(S) + have wondered(V) + [for centuries](M) + [about life after death](M)", grammar: "현재완료 (계속): 'for centuries'라는 긴 세월 부사구와 융합되어 과거부터 지금까지의 지속 상태를 수식합니다.", words: "wonder (궁금해하다), century (세기, 100년), life after death (사후 세계)", kor: "사람들은 사후 세계에 대해 수 세기 동안 궁금해해 왔다." },
+            { ch: "CH5", no: 301, unit: "UNIT 29", eng: "We have been to Jeju Island many times.", struct: "We(S) + have been to(V) + Jeju Island(M) + [many times](M)", grammar: "현재완료 (경험): 'have been to'는 '~에 가본 적이 있다'를 정의하며 횟수 지표(many times)와 조응합니다.", words: "have been to (~에 가본 적이 있다), many times (여러 번)", kor: "우리는 제주도에 여러 번 가본 적이 있다." },
+            // [정정 완료] 누락되었던 ch: "CH5" 필드를 안전하게 탑재했습니다.
+            { ch: "CH5", no: 302, unit: "UNIT 29", eng: "We have just been to Jeju Island for summer vacation.", struct: "We(S) + have [just] been to(V) + Jeju Island(M) + [for summer vacation](M)", grammar: "현재완료 (완료): 완료 힌트어 'just'와 결합하여 방금 막 다녀온 상태가 완료되었음을 뜻합니다.", words: "just (방금, 막), summer vacation (여름 휴가)", kor: "우리는 여름 휴가로 방금 제주도에 다녀왔다." },
+            { ch: "CH5", no: 303, unit: "UNIT 29", eng: "South Africa has lost many natural habitats due to deforestation.", struct: "South Africa(S) + has lost(V) + many natural habitats(O) + [due to deforestation](M)", grammar: "현재완료 (결과): 과거 소실 행동으로 인해 '그 결과 현재 생태계 서식지가 소실되어 부재한 상태'임을 기술합니다.", words: "natural habitat (자연 서식지), due to (~때문에), deforestation (삼림 파괴)", kor: "남아프리카공화국은 삼림 파괴로 인해 많은 자연 서식지를 잃어버렸다." },
+            { ch: "CH5", no: 304, unit: "UNIT 29", eng: "Since 1985, the company has been in its present location.", struct: "[Since 1985](M), the company(S) + has been(V) + [in its present location](M)", grammar: "현재완료 (계속): 'Since + 과거 기준연도'가 개입되어 현재완료 주절 지표의 연속성을 강제 수용합니다.", words: "since (~이래로), present (현재의), location (위치)", kor: "1985년 이래로 그 회사는 현재의 위치에 있어 왔다." },
+            { ch: "CH5", no: 305, unit: "UNIT 29", eng: "It has been my lifelong dream to visit this beautiful city.", struct: "It(가S) + has been(V) + my lifelong dream(C) + [to visit...](진S)", grammar: "가주어 진주어 완료결합: 과거 오랜 시점부터 지속 축적되어 온 평생의 꿈 상태를 진술합니다.", words: "lifelong (평생의), dream (꿈), visit (방문하다)", kor: "이 아름다운 도시를 방문하는 것은 나의 평생의 꿈이었다." },
+            // [정정 완료] '미래를상상해' 오탈자를 '미래를 상상해'로 정밀 컴파일 띄어쓰기 교정 완료했습니다.
+            { ch: "CH5", no: 306, unit: "UNIT 29", eng: "Have you ever imagined your future?", struct: "Have(V) + you(S) + [ever] + imagined(V') + your future(O)?", grammar: "현재완료 의문문: 경험의 유무 판별 수단어인 부사 'ever(~해 본 적이 있는가)'가 결합된 의문문 형식입니다.", words: "imagine (상상하다), future (미래)", kor: "당신은 당신의 미래를 상상해 본 적이 있습니까?" },
+            { ch: "CH5", no: 307, unit: "UNIT 29", eng: "The baseball team has never won a game so far this season.", struct: "The baseball team(S) + has [never] won(V) + a game(O) + [so far...](M)", grammar: "현재완료 (경험/계속): 빈도 부정어 'never' 및 'so far'(지금까지) 지표의 복합 조화로 현재까지 달성 못한 전적 상태를 표현합니다.", words: "never (결코 ~않다), so far (지금까지)", kor: "그 야구팀은 이번 시즌 지금까지 단 한 경기도 이기지 못했다." },
+            { ch: "CH5", no: 308, unit: "UNIT 29", eng: "She’s only twenty, but she’s already achieved worldwide fame.", struct: "She’s(is) only twenty, but + she’s(has) [already] achieved(V) + worldwide fame(O)", grammar: "축약어 시제 변별: 앞 절의 's는 is(현재 시제), 뒤 절의 's는 has(현재완료 완료 부사 already 호응)의 축약입니다.", words: "achieve (성취하다), worldwide (세계적인), fame (명성)", kor: "그녀는 겨우 스무 살이지만, 이미 세계적인 명성을 얻었다." },
+            { ch: "CH5", no: 309, unit: "UNIT 29", eng: "He has just become a member of Mensa, with an estimated IQ of 156.", struct: "He(S) + has [just] become(V) + a member of Mensa(C)", grammar: "현재완료 (완료): 'just'를 유치하여 직전 시점에 멘사 정회원 도달 상태가 완수되었음을 획정합니다.", words: "become (~이 되다), estimated (추정되는), IQ (지능지수)", kor: "그는 추정 IQ 156으로 방금 멘사 회원이 되었다." },
+            { ch: "CH5", no: 310, unit: "UNIT 29", eng: "My sister has gone to the bank. She should be back soon.", struct: "My sister(S) + has gone to(V) + the bank(M)", grammar: "현재완료 (결과): 'has gone to'는 '가버리고 부재한 결과 상태'를 수포하므로 화자 본인 등 1, 2인칭 주어 배치가 성립하지 않습니다.", words: "have gone to (~로 가버렸다), bank (은행), be back (돌아오다)", kor: "내 여동생은 은행에 갔다. 그녀는 곧 돌아올 것이다." },
+            { ch: "CH5", no: 311, unit: "UNIT 29", eng: "Someone is sitting in the shade today because someone planted a tree a long time ago.", struct: "Someone(S1) + is sitting(V1) + [because someone(S2) planted(V2) a tree(O) a long time ago](M)", grammar: "시제 간섭 대조: 현재 시점의 역동성(is sitting)과 명사구 과거 사건 부사(a long time ago)에 지배받는 단순과거형(planted)의 명확한 시차 배열입니다.", words: "shade (그늘), plant (심다), a long time ago (오래전에)", kor: "누군가가 오늘 그늘에 앉아 있다 왜냐하면 누군가가 오래전에 나무를 심었기 때문이다." },
+            { ch: "CH5", no: 312, unit: "UNIT 29", eng: "N Seoul Tower has been a symbol of Seoul since it first opened to the public in 1980.", struct: "N Seoul Tower(S) + has been(V) + a symbol(C) + [since it opened...](M)", grammar: "since 복합시제 규칙: 종속절 since 내부는 명확한 시발점 과거형(opened in 1980), 이와 호응하는 주절 뼈대는 전방위 현재완료(has been)가 원칙입니다.", words: "symbol (상징), open to the public (대중에게 개방되다)", kor: "N서울타워는 1980년에 대중에게 처음 개방된 이래로 서울의 상징이어 왔다." },
+            { ch: "CH5", no: 313, unit: "UNIT 29", eng: "The baby has been crying since we got here.", struct: "The baby(S) + has been crying(V) + [since we got here](M)", grammar: "현재완료 진행형: [have/has been + -ing] 구문을 수립하여 과거 시점 기점부터 현재 대화 순간까지 '계속 쉼 없이 울고 있음'의 생생함을 보여줍니다.", words: "cry (울다), get here (도착하다)", kor: "그 아기는 우리가 여기 도착한 이래로 계속 울고 있다." },
+            { ch: "CH5", no: 314, unit: "UNIT 29", eng: "How long have you been looking for a job?", struct: "[How long](M) + have + you(S) + been looking for(V) + a job(O)?", grammar: "현재완료 진행 의문문: 구동사 'look for'가 완료진행의 어순틀 속으로 흡수되어 구직 상태 지속 기한을 구체적으로 문책합니다.", words: "how long (얼마나 오래), look for (~을 찾다), job (일자리)", kor: "당신은 얼마나 오랫동안 일자리를 구하고 있습니까?" },
+            { ch: "CH5", no: 315, unit: "UNIT 29", eng: "I have been trying to solve this problem all afternoon. It’s time for a break.", struct: "I(S) + have been trying(V) + {to solve this problem}(O)", grammar: "현재완료 진행 & try 목적어: 오후 내내(all afternoon) 사투를 벌여온 상황입니다. try to-v는 주어의 노력을 유치하는 명사 부정사구입니다.", words: "try to-v (~하려고 애쓰다), solve (풀다, 해결하다), break (휴식)", kor: "나는 오후 내내 이 문제를 풀려고 애쓰는 중이다. 이제 좀 쉴 시간이다." },
+            { ch: "CH5", no: 316, unit: "UNIT 29", eng: "The event has been taking place in the city on the first Saturday of May each year.", struct: "The event(S) + has been taking place(V) + [in the city...](M)", grammar: "현재완료 진행: 정기적인 규칙 주기성(each year)이 부여된 역사적 발생 상황이라도 지속의 의미가 강력할 때 완료진행을 배치할 수 있습니다.", words: "take place (열리다, 개최되다), each year (매년)", kor: "그 행사는 매년 5월 첫째 토요일에 그 도시에서 계속 열려오고 있다." },
+            { ch: "CH5", no: 317, unit: "UNIT 30", eng: "The pianist had been sick for two weeks, so she couldn’t take part in the concert.", struct: "The pianist(S1) + had been(V1) + sick(C1) + so + she(S2) + couldn’t take part in(V2)", grammar: "과거완료 (계속): 과거 특정 기준 행동시점(couldn't)보다 그 앞선 연대기 상 2주 동안 편찮으셨던 대과거 상태의 영속입니다.", words: "sick (아픈), take part in (~에 참가하다), concert (콘서트)", kor: "그 피아니스트는 2주 동안 아팠었다, 그래서 그녀는 콘서트에 참가할 수 없었다." },
+            { ch: "CH5", no: 318, unit: "UNIT 30", eng: "I recognized him at once because I had seen him before.", struct: "I(S1) + recognized(V1) + him(O1) + [because I(S2) + had seen(V2) + him before](M)", grammar: "과거완료 (대과거/경험): 대상을 파악한 과거형 시점(recognized) 대비, 그 이전에 대상을 대면했던 사건(had seen)이 시간 선상 앞서 실현되었습니다.", words: "recognize (알아보다), at once (즉시), before (전에)", kor: "나는 그를 즉시 알아봤는데, 왜냐하면 그를 전에 본 적이 있었기 때문이다." },
+            { ch: "CH5", no: 319, unit: "UNIT 30", eng: "When I entered the classroom, the lesson had already finished.", struct: "[When I entered...](M), the lesson(S) + had [already] finished(V)", grammar: "과거완료 (완료): 교실에 입실한 과거 타이밍(entered: 과거)보다, 이미 수업의 전반적인 모든 과정이 마감되어 완결(had finished)되었음을 소명합니다.", words: "enter (들어가다), already (이미), finish (끝나다)", kor: "내가 교실에 들어갔을 때, 수업은 이미 끝나 있었다." },
+            { ch: "CH5", no: 320, unit: "UNIT 30", eng: "Almost 11 minutes had gone by when the players finally stopped challenging the referee over his decision.", struct: "Almost 11 minutes(S) + had gone by(V) + [when the players stopped...](M)", grammar: "과거완료 & stop 동명사: 선수들이 항의 의사를 제정 중단한 시점(stopped) 이전에, 미터기 상 흘러 가버린 시간(had gone by)의 대과거적 축적을 고발합니다.", words: "go by (시간이 흐르다), stop -ing (~를 멈추다), challenge (이의제기하다), referee (심판), decision (판정)", kor: "선수들이 마침내 심판의 판정에 항의하는 것을 멈추었을 때 거의 11분이 흘러가 버렸다." },
+            { ch: "CH5", no: 321, unit: "UNIT 30", eng: "Carol prepared a gift for her mom, who had sacrificed all her life for her family.", struct: "Carol(S) + prepared(V) + a gift(O) [, who(주.관) had sacrificed(V')...](관계사 계속용법)", grammar: "과거완료 & 계속적 관계사: 선물을 세팅한 과거 행동(prepared) 이전에, 어머니가 평생에 걸쳐 자식을 위해 고행 헌신한 누적 대과거사를 had p.p.로 봉헌합니다.", words: "prepare (준비하다), sacrifice (희생하다), all her life (평생 동안)", kor: "캐롤은 어머니를 위해 선물을 준비했는데, 어머니는 가족을 위해 평생을 희생하셨었다." },
+            { ch: "CH5", no: 322, unit: "UNIT 30", eng: "She will have graduated from college by next month.", struct: "She(S) + will have graduated(V) + [from college] [by next month](M)", grammar: "미래완료: 미래 귀결 마감선 'by next month'의 등장으로 미래 시점에 도달하면 학위 취득이 완결 완료되어 있을 것을 예측합니다.", words: "graduate from (~을 졸업하다), college (대학)", kor: "그녀는 다음 달이면 대학을 졸업하게 될 것이다." },
+            { ch: "CH5", no: 323, unit: "UNIT 30", eng: "She will have taught English for ten years by next year.", struct: "She(S) + will have taught(V) + English(O) + [for ten years] [by next year](M)", grammar: "미래완료 (계속): 내년(by next year)시차에 골인하게 되면 만 10년이라는 계속 교수 실적 누적 수치가 완성됨을 고지합니다.", words: "teach (가르치다), next year (내년)", kor: "내년이면 그녀는 영어를 가르친 지 10년이 될 것이다." },
+            { ch: "CH5", no: 324, unit: "UNIT 30", eng: "If I see this film once more, I will have seen it three times.", struct: "[If I see...](조건절), I(S) + will have seen(V) + it(O) + [three times](M)", grammar: "미래완료 (경험): 조건절 내부 미래 대용 현재형(see). 주절은 차후 완수 도달 시 총 3회 관람의 경험 누적치(three times)를 수립하게 됨을 내다봅니다.", words: "film (영화), once more (한 번 더), three times (세 번)", kor: "만약 내가 이 영화를 한 번 더 본다면, 나는 그것을 세 번 보는 것이 될 것이다." },
+            { ch: "CH5", no: 325, unit: "UNIT 30", eng: "We will have overcome differences if we respect them.", struct: "We(S) + will have overcome(V) + differences(O) + [if we respect them](조건절)", grammar: "미래완료: 상호 관념을 리스펙트 존중하는 조건 충족 시, 다가올 미래선 상에서 차이점 극복(overcome)을 완수해 낼 것임을 확약합니다.", words: "overcome (극복하다), difference (차이점), respect (존중하다)", kor: "만약 우리가 차이점들을 존중한다면, 우리는 차이점들을 극복하게 될 것이다." },
+            { ch: "CH5", no: 326, unit: "UNIT 31", eng: "I am very satisfied to have tried many kinds of sports last year.", struct: "I(S) + am(V) + satisfied(C) + [to have tried... last year](M)", grammar: "완료 부정사: 정서 만족 상태는 '현재(am)'이나, 구체적 스포츠 활동 실천은 '과거(last year)'. 시차가 발생하여 완료부정사 to have p.p.를 정초합니다.", words: "satisfied (만족하는), try (시도하다), kind of (종류)", kor: "나는 작년에 많은 종류의 스포츠를 시도해 보았던 것에 매우 만족한다." },
+            { ch: "CH5", no: 327, unit: "UNIT 31", eng: "He denied having made a serious mistake.", struct: "He(S) + denied(V) + {having made a serious mistake}(O)", grammar: "완료 동명사: 과실 사실 부인(denied: 과거) 행동 기준, 기정 가해 행동이 선행된 과거 사건이므로 타동사 목적어로 having p.p.를 배치합니다.", words: "deny (부인하다), serious (심각한), mistake (실수)", kor: "그는 심각한 실수를 저질렀던 것을 부인했다." },
+            { ch: "CH5", no: 328, unit: "UNIT 31", eng: "A farmer claimed to have seen a UFO in the sky.", struct: "A farmer(S) + claimed(V) + {to have seen...}(O)", grammar: "완료 부정사 목적어: 주장 행동(claimed: 과거) 대비, 미확인 물체 상공 포착 사건이 선행된 대과거 사건이므로 완료형 부정사 명사 목적어구를 도출합니다.", words: "claim (주장하다), sky (하늘)", kor: "한 농부는 하늘에서 UFO를 보았었다고 주장했다." },
+            { ch: "CH5", no: 329, unit: "UNIT 31", eng: "It was helpful to have reviewed the book before I attended the history class.", struct: "It(가S) + was(V) + helpful(C) + {to have reviewed...}(진S)", grammar: "완료 부정사 진주어: 이점을 획득한 과거 판단점(was) 대비 서적 복습 실천이 시기상 명확히 선행되었으므로 진주어로 완료 부정사를 기치합니다.", words: "helpful (도움이 되는), review (복습하다), attend (참석하다)", kor: "내가 역사 수업에 참석하기 전에 그 책을 복습해 두었던 것은 도움이 되었다." },
+            { ch: "CH5", no: 330, unit: "UNIT 31", eng: "Having failed once doesn’t mean that you’re going to fail at everything.", struct: "{Having failed once}(S) + doesn’t mean(V) + [that...](O)", grammar: "완료 동명사구 주어: 정의 내리는 현실 주절(doesn't mean: 현재) 대비 과거 실패 전력을 주어로 이끌었기에 동명사 완료형 Having failed가 도출되며 단수 처리합니다.", words: "fail (실패하다), mean (의미하다), everything (모든 것)", kor: "한 번 실패했었다는 것이 당신이 모든 일에 실패할 것이라는 것을 의미하지는 않는다." },
+            { ch: "CH5", no: 331, unit: "UNIT 31", eng: "I’m pretty proud of having completed a marathon myself.", struct: "I(S) + ’m proud of(V) + {having completed a marathon}(O)", grammar: "완료 동명사 목적어: 자랑스러운 자부심은 '현재(am)'이나 마라톤을 완주한 고행은 '과거'. 전치사 of의 목적어 시차가 확정되어 having p.p.를 수용합니다.", words: "pretty (꽤), proud of (~을 자랑스러워하는), complete (완주하다), myself (스스로)", kor: "나는 마라톤을 스스로 완주해냈던 것이 꽤 자랑스럽다." },
+            { ch: "CH5", no: 332, unit: "UNIT 31", eng: "John Bardeen is the only scientist to have received two Nobel Prizes in the Physics category.", struct: "John Bardeen(S) + is(V) + the only scientist(C) + [to have received...](M)", grammar: "형용사적 완료부정사: 불멸의 영예인 과학자로 현재 등재된 위상(is: 현재) 기준, 과거 노벨상 수상의 역사적 실적 수식을 위해 to have received 형용사적 용법을 구사합니다.", words: "scientist (과학자), receive (수상하다), physics (물리학), category (부문)", kor: "존 바딘은 물리학 부문에서 두 개의 노벨상을 받았던 유일한 과학자이다." },
 
-            // UNIT 29
-            { no: 300, unit: "UNIT 29", eng: "People have wondered for centuries about life after death.", struct: "People(S) + have wondered(V) + [for centuries](M)", grammar: "현재완료 (계속): 'for centuries'라는 지속 기간 부사구의 유도로 계속적 개념을 표현합니다.", words: "wonder (궁금해하다), century (세기, 100년), life after death (사후 세계)", kor: "사람들은 사후 세계에 대해 수 세기 동안 궁금해해 왔다." },
-            { no: 301, unit: "UNIT 29", eng: "We have been to Jeju Island many times.", struct: "We(S) + have been to(V) + Jeju Island(M) + [many times](M)", grammar: "현재완료 (경험): 'have been to'는 '~에 가본 적이 있다'. 'many times'와 연동되어 경험을 소명합니다.", words: "have been to (~에 가본 적이 있다), many times (여러 번)", kor: "우리는 제주도에 여러 번 가본 적이 있다." },
-            { no: 302, unit: "UNIT 29", eng: "We have just been to Jeju Island for summer vacation.", struct: "We(S) + have [just] been to(V) + [for summer vacation](M)", grammar: "현재완료 (완료): 'just'가 쓰여 현재 기준 방금 막 동작이 종결되었음을 피력합니다.", words: "just (방금, 막), summer vacation (여름 휴가)", kor: "우리는 여름 휴가로 방금 제주도에 다녀왔다." },
-            { no: 303, unit: "UNIT 29", eng: "South Africa has lost many natural habitats due to deforestation.", struct: "South Africa(S) + has lost(V) + many natural habitats(O)", grammar: "현재완료 (결과): 과거에 서식처를 상실하여 '그 결과 지금 상태가 그러하다'는 현재의 소치를 품습니다.", words: "natural habitat (자연 서식지), due to (~때문에), deforestation (삼림 파괴)", kor: "남아프리카공화국은 삼림 파괴로 인해 많은 자연 서식지를 잃어버렸다." },
-            { no: 304, unit: "UNIT 29", eng: "Since 1985, the company has been in its present location.", struct: "[Since 1985](M), the company(S) + has been(V)", grammar: "현재완료 (계속): 'Since + 과거시점' 부사구가 명시되어 주절에 현재완료 계속성이 입증됩니다.", words: "since (~이래로), present (현재의), location (위치)", kor: "1985년 이래로 그 회사는 현재의 위치에 있어 왔다." },
-            { no: 305, unit: "UNIT 29", eng: "It has been my lifelong dream to visit this beautiful city.", struct: "It(가S) + has been(V) + my lifelong dream(C) + [to visit...](진S)", grammar: "가주어-진주어 완료결합: 과거부터 지금까지 평생 품어온 오랜 소망 상태의 유지를 반사합니다.", words: "lifelong (평생의), visit (방문하다)", kor: "이 아름다운 도시를 방문하는 것은 나의 평생의 꿈이었다." },
-            { no: 306, unit: "UNIT 29", eng: "Have you ever imagined your future?", struct: "Have(V) + you(S) + [ever] + imagined(V') + your future(O)?", grammar: "현재완료 의문문: 경험 유무의 단서가 되는 부사 'ever(~한 적이 있는가)'가 조동사 도치형에 수반되었습니다.", words: "imagine (상상하다), future (미래)", kor: "당신은 당신의 미래를 상상해 본 적이 있습니까?" },
-            { no: 307, unit: "UNIT 29", eng: "The baseball team has never won a game so far this season.", struct: "The baseball team(S) + has [never] won(V) + a game(O) + [so far...](M)", grammar: "현재완료 (경험/계속): 절대 부정어 'never' 및 'so far'(지금까지)와의 호응으로 지속적 전적을 서술합니다.", words: "never (결코 ~않다), so far (지금까지)", kor: "그 야구팀은 이번 시즌 지금까지 단 한 경기도 이기지 못했다." },
-            { no: 308, unit: "UNIT 29", eng: "She’s only twenty, but she’s already achieved worldwide fame.", struct: "She’s(is) only twenty, but + she’s(has) [already] achieved(V)", grammar: "축약형 변별: 앞의 She's는 She is(현재형 상태), 뒤의 she's는 she has(현재완료)의 축약형태입니다.", words: "achieve (성취하다), worldwide (세계적인), fame (명성)", kor: "그녀는 겨우 스무 살이지만, 이미 세계적인 명성을 얻었다." },
-            { no: 309, unit: "UNIT 29", eng: "He has just become a member of Mensa, with an estimated IQ of 156.", struct: "He(S) + has [just] become(V) + a member of Mensa(C)", grammar: "현재완료 (완료): 'just'를 활용하여 아주 임박한 시점에 사건 상태가 완수 완료되었음을 확인합니다.", words: "become (~이 되다), estimated (추정되는), IQ (지능지수)", kor: "그는 추정 IQ 156으로 방금 멘사 회원이 되었다." },
-            { no: 310, unit: "UNIT 29", eng: "My sister has gone to the bank. She should be back soon.", struct: "My sister(S) + has gone to(V) + the bank(M)", grammar: "현재완료 (결과): 'has gone to'는 '가고 여기 없다'는 단절을 주지하므로 1, 2인칭(I, You) 주어 기술이 불가합니다.", words: "have gone to (~로 가버렸다), bank (은행)", kor: "내 여동생은 은행에 갔다. 그녀는 곧 돌아올 것이다." },
-            { no: 311, unit: "UNIT 29", eng: "Someone is sitting in the shade today because someone planted a tree a long time ago.", struct: "Someone(S1) + is sitting(V1) + [because someone(S2) planted(V2) a tree(O)](M)", grammar: "시제 대조: 주절은 현재진행(is sitting) 상황, 종속절은 명백한 과거사 부사(a long time ago)로 인해 단순과거(planted)가 대응합니다.", words: "shade (그늘), plant (심다), a long time ago (오래전에)", kor: "누군가가 오늘 그늘에 앉아 있다 왜냐하면 누군가가 오래전에 나무를 심었기 때문이다." },
-            { no: 312, unit: "UNIT 29", eng: "N Seoul Tower has been a symbol of Seoul since it first opened to the public in 1980.", struct: "N Seoul Tower(S) + has been(V) + a symbol(C) + [since it opened...](M)", grammar: "since 복합문법: 종속절인 since 내부는 기점 과거시제(opened), 주절 문맥은 전체 수용 현재완료(has been)가 원칙입니다.", words: "symbol (상징), open to the public (대중에게 개방되다)", kor: "N서울타워는 1980년에 대중에게 처음 개방된 이래로 서울의 상징이어 왔다." },
-            { no: 313, unit: "UNIT 29", eng: "The baby has been crying since we got here.", struct: "The baby(S) + has been crying(V) + [since we got here](M)", grammar: "현재완료 진행형: [have/has been + -ing] 구조로 과거 시점부터 현재 말하는 이 순간까지 '줄곧 울어왔음'을 역동적으로 부각합니다.", words: "cry (울다), get here (도착하다)", kor: "그 아기는 우리가 여기 도착한 이래로 계속 울고 있다." },
-            { no: 314, unit: "UNIT 29", eng: "How long have you been looking for a job?", struct: "[How long](M) + have + you(S) + been looking for(V) + a job(O)?", grammar: "현재완료 진행 의문문: 구동사 'look for'가 완료진행 수동틀을 유지하며 구직의 행위 지속 기한을 취조합니다.", words: "how long (얼마나 오래), look for (~을 찾다), job (일자리)", kor: "당신은 얼마나 오랫동안 일자리를 구하고 있습니까?" },
-            { no: 315, unit: "UNIT 29", eng: "I have been trying to solve this problem all afternoon. It’s time for a break.", struct: "I(S) + have been trying(V) + {to solve this problem}(O)", grammar: "현재완료 진행 & try 용법: 오후 내내(all afternoon) 지속된 사투를 보여줍니다. try to-v는 노력을 유발하는 명사적 부정사구입니다.", words: "try to-v (~하려고 애쓰다), solve (풀다), break (휴식)", kor: "나는 오후 내내 이 문제를 풀려고 애쓰는 중이다. 이제 좀 쉴 시간이다." },
-            { no: 316, unit: "UNIT 29", eng: "The event has been taking place in the city on the first Saturday of May each year.", struct: "The event(S) + has been taking place(V)", grammar: "현재완료 진행: 정기적 규칙성(each year)이 부여되어 발생하는 역사 상태의 귀결도 완료진행으로 수립 가능합니다.", words: "take place (개최되다), each year (매년)", kor: "그 행사는 매년 5월 첫째 토요일에 그 도시에서 계속 열려오고 있다." },
-
-            // UNIT 30
-            { no: 317, unit: "UNIT 30", eng: "The pianist had been sick for two weeks, so she couldn’t take part in the concert.", struct: "The pianist(S1) + had been(V1) + sick(C1) + so + she(S2) + couldn’t take part in(V2)", grammar: "과거완료 (계속): 불참한 과거 기준점(couldn't)보다 그 이전에 2주간 앓았던 대과거 상태의 연속을 소묘합니다.", words: "sick (아픈), take part in (~에 참가하다), concert (콘서트)", kor: "그 피아니스트는 2주 동안 아팠었다, 그래서 그녀는 콘서트에 참가할 수 없었다." },
-            { no: 318, unit: "UNIT 30", eng: "I recognized him at once because I had seen him before.", struct: "I(S1) + recognized(V1) + him(O1) + [because I(S2) + had seen(V2) + him before](M)", grammar: "과거완료 (대과거): 대상 인지 시점(recognized: 과거)보다, 그 이전에 목격한 경험(had seen: 대과거)이 연대기 상 앞서 일어났습니다.", words: "recognize (알아보다), at once (즉시), before (전에)", kor: "나는 그를 즉시 알아봤는데, 왜냐하면 그를 전에 본 적이 있었기 때문이다." },
-            { no: 319, unit: "UNIT 30", eng: "When I entered the classroom, the lesson had already finished.", struct: "[When I entered...](M), the lesson(S) + had [already] finished(V)", grammar: "과거완료 (완료): 교실에 입실한 과거 타이밍(entered) 이전에 수업이 이미 조기 종결(had finished)되었음을 증명합니다.", words: "enter (들어가다), already (이미)", kor: "내가 교실에 들어갔을 때, 수업은 이미 끝나 있었다." },
-            { no: 320, unit: "UNIT 30", eng: "Almost 11 minutes had gone by when the players finally stopped challenging the referee over his decision.", struct: "Almost 11 minutes(S) + had gone by(V) + [when the players stopped...](M)", grammar: "과거완료 & stop 용법: 항의 행위 정지 시점(stopped) 이전에 미터기 상 시간이 먼저 경과(had gone by)되었음을 고발합니다.", words: "go by (흘러가다), stop -ing (~를 멈추다), challenge (이의제기하다), referee (심판)", kor: "선수들이 마침내 심판의 판정에 항의하는 것을 멈추었을 때 거의 11분이 흘러가 버렸다." },
-            { no: 321, unit: "UNIT 30", eng: "Carol prepared a gift for her mom, who had sacrificed all her life for her family.", struct: "Carol(S) + prepared(V) + a gift(O) [, who(주.관) had sacrificed(V')...](관계사 계속용법)", grammar: "과거완료 & 계속적 관계사: 준비를 행한 과거(prepared)보다 모친이 한평생 투쟁과 헌신을 감내한 누적 대과거 세월을 had p.p.로 승화합니다.", words: "prepare (준비하다), sacrifice (희생하다), all her life (평생 동안)", kor: "캐롤은 어머니를 위해 선물을 준비했는데, 어머니는 가족을 위해 평생을 희생하셨었다." },
-            { no: 322, unit: "UNIT 30", eng: "She will have graduated from college by next month.", struct: "She(S) + will have graduated(V) + [from college] [by next month](M)", grammar: "미래완료: 미래 지향적 마감점 'by next month'의 제약과 맞물려 미래 도래 시 학위 취득이 완수될 것을 예언합니다.", words: "graduate from (~을 졸업하다), college (대학)", kor: "그녀는 다음 달이면 대학을 졸업하게 될 것이다." },
-            { no: 323, unit: "UNIT 30", eng: "She will have taught English for ten years by next year.", struct: "She(S) + will have taught(V) + English(O) + [for ten years] [by next year](M)", grammar: "미래완료 (계속): 내년(by next year)이라는 이정표 시점에 도달 시 만 10년의 경력 수치가 자동 누적 성립됨을 뜻합니다.", words: "teach (가르치다), next year (내년)", kor: "내년이면 그녀는 영어를 가르친 지 10년이 될 것이다." },
-            { no: 324, unit: "UNIT 30", eng: "If I see this film once more, I will have seen it three times.", struct: "[If I see...](조건절), I(S) + will have seen(V) + it(O) + [three times](M)", grammar: "미래완료 (경험): 조건절 내 미래 대용 현재시제(see). 주절은 차후 완수 시 누적 경험 카운트(three times)가 달성됨을 내다봅니다.", words: "film (영화), once more (한 번 더), three times (세 번)", kor: "만약 내가 이 영화를 한 번 더 본다면, 나는 그것을 세 번 보는 것이 될 것이다." },
-            { no: 325, unit: "UNIT 30", eng: "We will have overcome differences if we respect them.", struct: "We(S) + will have overcome(V) + differences(O) + [if we respect them](조건절)", grammar: "미래완료: 상호 존중 조건을 총족할 시, 미래 시점에 완전한 화합 및 극복(overcome) 상태가 결실 맺음을 선언합니다.", words: "overcome (극복하다), difference (차이점), respect (존중하다)", kor: "만약 우리가 차이점들을 존중한다면, 우리는 차이점들을 극복하게 될 것이다." },
-
-            // UNIT 31
-            { no: 326, unit: "UNIT 31", eng: "I am very satisfied to have tried many kinds of sports last year.", struct: "I(S) + am(V) + satisfied(C) + [to have tried... last year](M)", grammar: "완료 부정사: 정서 상태 표출은 '현재(am)'이나, 스포츠 격투 활동은 '과거(last year)'. 본동사보다 시점이 앞서므로 to have p.p.를 장착합니다.", words: "satisfied (만족하는), try (시도하다), kind of (종류)", kor: "나는 작년에 많은 종류의 스포츠를 시도해 보았던 것에 매우 만족한다." },
-            { no: 327, unit: "UNIT 31", eng: "He denied having made a serious mistake.", struct: "He(S) + denied(V) + {having made a serious mistake}(O)", grammar: "완료 동명사: 사건 부인 행동(denied: 과거)보다, 기정 과실 가해 사실이 시기상 앞선 선행 사건이기에 목적어 자리에 having p.p.가 배치됩니다.", words: "deny (부인하다), serious (심각한), mistake (실수)", kor: "그는 심각한 실수를 저질렀던 것을 부인했다." },
-            { no: 328, unit: "UNIT 31", eng: "A farmer claimed to have seen a UFO in the sky.", struct: "A farmer(S) + claimed(V) + {to have seen...}(O)", grammar: "완료 부정사: 대외적 공식 주장(claimed: 과거)보다, 미확인 비행물체 실제 육안 목격 사건이 더 선행된 시간이므로 완료형 부정사 명사 목적어가 도출됩니다.", words: "claim (주장하다), sky (하늘)", kor: "한 농부는 하늘에서 UFO를 보았었다고 주장했다." },
-            { no: 329, unit: "UNIT 31", eng: "It was helpful to have reviewed the book before I attended the history class.", struct: "It(가S) + was(V) + helpful(C) + {to have reviewed...}(진S)", grammar: "완료 부정사 주어: 이점을 획득한 과거 시제점(was)보다, 독서 예습 선행 활동이 시간의 기축 상 선행하므로 진주어에 완료 부정사를 씁니다.", words: "helpful (도움이 되는), review (복습하다), attend (참석하다)", kor: "내가 역사 수업에 참석하기 전에 그 책을 복습해 두었던 것은 도움이 되었다." },
-            { no: 330, unit: "UNIT 31", eng: "Having failed once doesn’t mean that you’re going to fail at everything.", struct: "{Having failed once}(S) + doesn’t mean(V) + [that...](O)", grammar: "완료 동명사구 주어: 지목하는 현실 명제(doesn't mean: 현재)보다 과거 전력인 실패의 기록을 연계하므로 주어로 완료형 동명사가 성립되며 3인칭 단수 취급합니다.", words: "fail (실패하다), mean (의미하다), everything (모든 것)", kor: "한 번 실패했었다는 것이 당신이 모든 일에 실패할 것이라는 것을 의미하지는 않는다." },
-            { no: 331, unit: "UNIT 31", eng: "I’m pretty proud of having completed a marathon myself.", struct: "I(S) + ’m proud of(V) + {having completed a marathon}(O)", grammar: "완료 동명사: 자랑스러워하는 심리는 '현재(am)'이나 레이스를 뛰어 마친 노고는 '과거'. 전치사 of의 목적어 시차가 성립되어 having p.p.가 쓰였습니다.", words: "pretty (꽤), proud of (~을 자랑스러워하는), complete (완주하다)", kor: "나는 마라톤을 스스로 완주해냈던 것이 꽤 자랑스럽다." },
-            { no: 332, unit: "UNIT 31", eng: "John Bardeen is the only scientist to have received two Nobel Prizes in the Physics category.", struct: "John Bardeen(S) + is(V) + the only scientist(C) + [to have received...](M)", grammar: "형용사적 완료부정사: 불멸의 인물로 현재 등록된 지위(is) 대비, 과거사 수상 역사 기록(to have received)의 격차를 나타내는 형용사적 수식 구조입니다.", words: "scientist (과학자), receive (수상하다), physics (물리학), category (부문)", kor: "존 바딘은 물리학 부문에서 두 개의 노벨상을 받았던 유일한 과학자이다." }
+            // ==================== CHAPTER 06 조동사 ====================
+            { ch: "CH6", no: 333, unit: "UNIT 32", eng: "She can speak several languages plus her own language.", struct: "She(S) + can speak(V) + several languages(O) + [plus her own language](M)", grammar: "조동사 can: 현재 주어의 선천적/후천적 능력을 표출하며, 'is able to speak'로 상호 전환이 자유롭습니다.", words: "several (몇몇의, 여러), plus (~외에, ~을 더하여)", kor: "그녀는 그녀 자신의 언어 외에 몇 개의 언어를 말할 수 있다." },
+            { ch: "CH6", no: 334, unit: "UNIT 32", eng: "Can I take pictures or film videos of these exhibits?", struct: "Can + I(S) + take(V1) pictures(O1) or film(V2) videos(O2) + [of these exhibits](M)?", grammar: "조동사 can 의문문: 허가(~해도 되나요)를 구하는 회화 양식으로, or 등위 접속사에 의해 동사원형 take와 film이 병렬 구조를 형성합니다.", words: "film (동영상 촬영하다), exhibit (전시물, 진열품)", kor: "이 전시물들의 사진을 찍거나 동영상을 촬영해도 되겠습니까?" },
+            { ch: "CH6", no: 335, unit: "UNIT 32", eng: "You may keep this guidebook or return it for others to use.", struct: "You(S) + may keep(V1) this guidebook(O1) or return(V2) it(O2) + [for others to use]", grammar: "조동사 may & 의미상 주어: may는 허가(~해도 좋다)의 뜻을 투사하며, 'for + 명사'는 뒤따르는 to부정사구 행동의 주체를 한정합니다.", words: "keep (보관하다, 가지다), return (반납하다)", kor: "당신은 이 안내서를 가지거나 다른 사람들이 사용할 수 있도록 그것을 반납해도 좋다." },
+            { ch: "CH6", no: 336, unit: "UNIT 32", eng: "Our love is the wind. I can’t see it, but I can feel it.", struct: "Our love(S) + is(V) + the wind(C). I(S) + can’t see(V) + it(O), but + I(S) + can feel(V) + it(O).", grammar: "can't와 can의 대치: 감각 기관을 관통하는 주어의 불능(~볼 수 없다)과 능력(~느낄 수 있다)의 뚜렷한 대비 구조입니다.", words: "wind (바람), feel (느끼다)", kor: "우리들의 사랑은 바람과 같다. 나는 그것을 볼 수는 없지만, 느낄 수는 있다." },
+            { ch: "CH6", no: 337, unit: "UNIT 32", eng: "I couldn’t find the sports car of my dreams, so I built it myself.", struct: "I(S) + couldn’t find(V) + the sports car(O) ..., so + I(S) + built(V) + it(O) + [myself](강조)", grammar: "과거 조동사 couldn't & 재귀강조: 과거 특정 시점의 불능을 전제하며, 주어 뒤의 강조 용법 제귀대명사 myself는 생략이 가능합니다.", words: "dream (꿈), build (만들다 - 과거형 built), myself (스스로, 직접)", kor: "나는 내 꿈의 스포츠카를 찾을 수 없었다, 그래서 나는 그것을 직접 만들었다." },
+            { ch: "CH6", no: 338, unit: "UNIT 32", eng: "With faith, you will be able to handle any challenges in life.", struct: "[With faith](M), you(S) + will be able to handle(V) + any challenges(O) [in life](M)", grammar: "미래 능력 표현: 미래 조동사 will과 can은 병치가 불허되므로, can을 be able to로 치환하여 복합 미래 능력을 수립합니다.", words: "faith (신념, 믿음), handle (다루다, 처리하다), challenge (도전, 난제)", kor: "신념이 있다면, 당신은 인생에서 어떠한 도전도 해결할 수 있게 될 것이다." },
+            { ch: "CH6", no: 339, unit: "UNIT 32", eng: "Visitors may use the swimming pool between 5:30 p.m. and 7:30 p.m.", struct: "Visitors(S) + may use(V) + the swimming pool(O) + [between 5:30 p.m. and 7:30 p.m.](M)", grammar: "조동사 may: 규칙이나 규약 틀에 명문화되어 명시된 공적 허가(~해도 좋다)의 표본을 제시합니다.", words: "visitor (방문객), between A and B (A와 B 사이에)", kor: "방문객들은 오후 5시 반과 오후 7시 반 사이에 수영장을 이용해도 좋다." },
+            { ch: "CH6", no: 340, unit: "UNIT 32", eng: "You cannot make or take phone calls in the library except in designated areas.", struct: "You(S) + cannot make(V1) or take(V2) + phone calls(O) [except in designated areas](M)", grammar: "cannot 금지 & 타동사 병렬: 문맥 기류상 강력한 행동 통제 금지(~해서는 안 된다)를 고지합니다. make(걸다)와 take(받다)가 phone calls를 공유 제어합니다.", words: "except (~을 제외하고), designated (지정된), area (구역)", kor: "지정된 구역을 제외하고는 도서관 내에서 전화를 걸거나 받아서는 안 된다." },
+            { ch: "CH6", no: 341, unit: "UNIT 32", eng: "I cannot relax in my apartment. The noise from the park at night is so loud.", struct: "I(S) + cannot relax(V) [in my apartment](M). The noise [from the park at night](S) + is(V) + so loud(C).", grammar: "cannot 현실 제약: 외부 소음 난제로 인하여 주어가 부닥친 현재 상황의 불능을 서술 구조로 정착했습니다.", words: "relax (휴식을 취하다), noise (소음), loud (시끄러운)", kor: "나는 내 아파트에서 편히 쉴 수 없다. 밤에 공원으로부터 오는 소음이 너무 시끄럽다." },
+            { ch: "CH6", no: 342, unit: "UNIT 33", eng: "Your mistakes should be your motivation, not your excuses.", struct: "Your mistakes(S) + should be(V) + your motivation(C), [not your excuses](M)", grammar: "조동사 should: 도덕적 규범, 가치 판단에 의거한 당연한 당위성 및 강력한 충고 권고(~해야 한다)를 유도합니다.", words: "mistake (실수), motivation (동기부여), excuse (변명)", kor: "당신의 실수는 당신의 동기부여가 되어야지, 당신의 변명이 되어서는 안 된다." },
+            { ch: "CH6", no: 343, unit: "UNIT 33", eng: "To live a creative life, we must lose our fear of being wrong.", struct: "[To live a creative life](목적M), we(S) + must lose(V) + our fear(O) [of being wrong](M)", grammar: "must 의문 여지없는 필수: 주절 동사에 가장 강력한 강제 의무 속성(~해야만 한다)을 주입하며, 전치사 of 뒤에는 동명사구(being wrong)가 수반됩니다.", words: "creative (창의적인), lose (잃다, 버리다), fear (두려움), wrong (틀린)", kor: "창의적인 삶을 살기 위해서, 우리는 틀리는 것에 대한 두려움을 버려야만 한다." },
+            { ch: "CH6", no: 344, unit: "UNIT 33", eng: "We should not judge people’s merits by their qualifications.", struct: "We(S) + should not judge(V) + people’s merits(O) + [by their qualifications](M)", grammar: "should not 충고형 금지: 잠정적 행동 규약에 입각한 지당한 비권장 행동 거부(~하지 말아야 한다)를 계도합니다.", words: "judge (판단하다), merit (가치, 장점), qualification (자격 요건)", kor: "우리는 사람의 가치를 그들의 자격 요건으로 판단하지 말아야 한다." },
+            { ch: "CH6", no: 345, unit: "UNIT 33", eng: "You ought to expect better of people. It encourages you to be a better person yourself.", struct: "You(S) + ought to expect(V) + better [of people](M). It(S) + encourages(V) + you(O) + {to be a better person}(C)", grammar: "ought to 당위 & 5형식 문형: should와 문법적 치환이 완벽한 의무 조동사이며, 후속절은 encourage + 목적어 + to-v(목적보어) 5형식 논리 틀입니다.", words: "expect of (~에게 기대하다), encourage (독려하다), yourself (너 스스로)", kor: "너는 사람들에게 더 나은 것을 기대해야 한다. 그것이 너 스스로가 더 좋은 사람이 되도록 독려한다." },
+            { ch: "CH6", no: 346, unit: "UNIT 33", eng: "Life is like fireworks. You had better seize the moment!", struct: "Life(S) + is(V) + like fireworks(C). You(S) + had better seize(V) + the moment(O)!", grammar: "had better 원형 권고: '~하는 편이 신상 및 정황상 전적으로 좋다'는 뜻으로 이행하지 않을 시 리스크 유발을 함축하는 권고입니다.", words: "fireworks (불꽃놀이), seize (포착하다, 잡다), moment (순간)", kor: "인생은 불꽃놀이와 같다. 당신은 그 순간을 포착하는 것이 좋다!" },
+            { ch: "CH6", no: 347, unit: "UNIT 33", eng: "You had better not force your opinion on others.", struct: "You(S) + had better not force(V) + your opinion(O) + [on others](M)", grammar: "had better not 부정 구조: 준조동사 덩어리 바로 뒤편에 부정어 'not'을 정초시켜 부정 권고(~하지 않는 게 낫다)를 완성합니다.", words: "force (강요하다), opinion (의견), others (타인)", kor: "당신은 당신의 의견을 타인에게 강요하지 않는 편이 좋다." },
+            { ch: "CH6", no: 348, unit: "UNIT 33", eng: "You need not do great things to show great love for your neighbors.", struct: "You(S) + need not do(V) + great things(O) + [to show great love...](M)", grammar: "need not 본원 조동사: 불필요의 속성(~할 필요가 없다)을 보이며 don't have to-v 및 don't need to-v와 통용 가능한 동사원형 유도체입니다.", words: "neighbor (이웃), show (보여주다)", kor: "당신은 당신의 이웃에게 큰 사랑을 보여주기 위해 거대한 일들을 할 필요는 없다." },
+            { ch: "CH6", no: 349, unit: "UNIT 33", eng: "We have to try to see the positives in life even while we are stuck in the middle of trouble.", struct: "We(S) + have to try(V) + {to see...}(O) + [even while we are stuck...](M)", grammar: "have to 당위 & try to 노력 & 수동태: 객관적 의무성을 부여하는 have to 아래 try to-v 노력이 수반되며 접속사 절은 be stuck(수동태)이 쓰였습니다.", words: "positive (긍정적인 점), while (~하는 와중에도), stuck (갇힌, 꼼짝 못 하는), trouble (곤경)", kor: "우리가 고난의 한복판에 갇혀 있는 와중에도 우리는 인생에서 긍정적인 면을 보려고 노력해야 한다." },
+            { ch: "CH6", no: 350, unit: "UNIT 33", eng: "Adults must pay an entrance fee, but children don’t have to pay anything.", struct: "Adults(S1) + must pay(V1) ... 부 + children(S2) + don’t have to pay(V2) + anything(O)", grammar: "must 의문없는 의무 vs don't have to 불필요: 전자는 강제성인 반면 후자는 '불필요(~할 필요가 없다)'인 상반된 변별 메커니즘을 이룹니다.", words: "adult (성인), entrance fee (입장료), anything (아무것도)", kor: "성인은 반드시 입장료를 내야 하지만, 어린이는 아무것도 낼 필요가 없다." },
+            { ch: "CH6", no: 351, unit: "UNIT 34", eng: "To produce something worthwhile may require years of fruitless labor.", struct: "{To produce something worthwhile}(S) + may require(V) + years of fruitless labor(O)", grammar: "to부정사 주어 & 조동사 may: 부정사구가 주어로 안착되었으며 -thing 수식 형용사 worthwhile이 후치 수식합니다. may는 유동적 현재 추측입니다.", words: "worthwhile (가치 있는), require (요구하다), fruitless (결실 없는), labor (노동)", kor: "가치 있는 무언가를 생산하는 것은 수년간의 결실 없는 노동을 요구할지도 모른다." },
+            { ch: "CH6", no: 352, unit: "UNIT 34", eng: "Our bill is over $200 — that can’t be right. There must be some mistake.", struct: "Our bill(S) ... that(S) + can’t be(V) + right(C). There + must be(V) + some mistake(S)", grammar: "can't be 강한 부적 확신 vs must be 강한 정적 확신: '~일 리가 없다'와 '~임에 틀림없다'의 정반대 축을 구성하는 핵심 추측 코드입니다.", words: "bill (청구서), right (옳은), mistake (실수)", kor: "우리 청구서가 200달러가 넘었다. 그것은 맞을 리가 없다. 무슨 실수가 있음에 틀림없다." },
+            { ch: "CH6", no: 353, unit: "UNIT 34", eng: "Accepting your flaws might lead to personal growth and change.", struct: "{Accepting your flaws}(S) + might lead to(V) + personal growth and change(O)", grammar: "동명사 주어 & 조동사 might: 동명사구가 단수 주어 역할을 이행하며, might는 may보다 개연성 확률이 현저히 떨어지는 약한 추측을 뜻합니다.", words: "accept (수용하다), flaw (결점), lead to (~로 이어지다), growth (성장)", kor: "자신의 결점을 수용하는 것은 개인적인 성장과 변화로 이어질지도 모른다." },
+            { ch: "CH6", no: 354, unit: "UNIT 34", eng: "Your worst day could be a blessing in disguise.", struct: "Your worst day(S) + could be(V) + a blessing in disguise(C)", grammar: "조동사 could: 과거형 외견이나 시제는 현재/미래선의 막연한 추측성 가능성(~일 수도 있다)을 기술합니다.", words: "worst (최악의), blessing (축복), disguise (변장)", kor: "당신의 최악의 날은 변장하고 찾아온 축복일 수도 있다." },
+            { ch: "CH6", no: 355, unit: "UNIT 34", eng: "A single moment can change your life; be open to gift-like chances which the world might bring to your feet.", struct: "A single moment(S) + can change(V) ... be(V) + open ... [which(목.관) the world might bring...](M)", grammar: "can 이론적 가능성 & 목적격 관계사: can은 언제든 일어날 수 있는 가능성을 지니며 목적격 관계사절인 which 이하가 chances를 후치 제어합니다.", words: "single (단 하나의), gift-like (선물 같은), chance (기회), bring to one's feet (발앞에 가져다주다)", kor: "단 한 순간이 당신의 인생을 바꿀 수 있다. 세상이 당신의 발앞에 가져다줄지도 모르는 선물 같은 기회들에 마음을 열어라." },
+            { ch: "CH6", no: 356, unit: "UNIT 34", eng: "The cherry blossoms should be in full bloom in a day or two and will last about a week.", struct: "The cherry blossoms(S) + should be(V1) ... and + will last(V2) [about a week]", grammar: "should 추측 &동사 병렬: 여기서 should는 의무가 아닌 '상식과 정황선 상 당연히 ~일 것이다'라는 타당한 기대 추측의 전개입니다.", words: "cherry blossom (벚꽃), in full bloom (만개한), last (지속되다)", kor: "벚꽃은 하루 이틀 사이에 만개할 것이며, 일주일 정도 지속될 것이다." },
+            { ch: "CH6", no: 357, unit: "UNIT 34", eng: "The film ought to take about 90 minutes, so we’ll be home by 10 p.m.", struct: "The film(S) + ought to take(V) ... so + we(S) + ’ll be(V) + home [by 10 p.m.](M)", grammar: "ought to 당연한 추측: should와 완벽한 시제 호환을 가치 삼아 순리적인 사건 전개 예측(~할 것이다)을 타전합니다.", words: "take (시간이 걸리다), minute (분), by (~쯤에는)", kor: "그 영화는 대략 90분이 걸릴 것이므로, 우리는 오후 10시쯤에는 집에 도착할 것이다." },
+            { ch: "CH6", no: 358, unit: "UNIT 34", eng: "The best way to answer the question would be to focus on the things that matter.", struct: "The best way [to answer...](S) + would be(V) + {to focus...}(C) + [that(주.관) matter(V')](M)", grammar: "would 가정의 추측 & 주격관계사: 조동사 would는 가상의 정황을 상정한 조심스러운 현재 추측 보어절 명사부정사구와 주격관계절(that)이 조화를 이룹니다.", words: "answer (답변하다), focus on (~에 집중하다), matter (중요하다)", kor: "그 질문에 답변하는 가장 좋은 방법은 중요한 것들에 집중하는 것일 것이다." },
+            { ch: "CH6", no: 359, unit: "UNIT 34", eng: "As you will understand, we can’t make exceptions to this safety rule.", struct: "[As you will understand](M), we(S) + can’t make(V) + exceptions(O) [to this safety rule](M)", grammar: "will 당연 지사 추측 & can't 불능: As절의 추측 조동사와 주절의 타협 불가 강력 불능 방침(~할 수 없다)의 조화 구문입니다.", words: "understand (이해하다), exception (예외), safety rule (안전 수칙)", kor: "당신도 이해하시겠지만, 우리는 이 안전 수칙에 예외를 둘 수 없다." },
+            { ch: "CH6", no: 360, unit: "UNIT 34", eng: "It cannot be true that he is home now. He went to the east coast on vacation yesterday.", struct: "It(가S) + cannot be(V) + true(C) + {that he is home now}(진S). He(S) + went(V) ...", grammar: "가주어 진주어 명사절 & cannot be: 확실한 반대 물증(yesterday went)을 토대로 '지금 집에 있을 리가 절대 없다'는 부정 확신을 하달합니다.", words: "true (사실인), east coast (동해안), on vacation (휴가차)", kor: "그가 지금 집에 있다는 것은 사실일 리가 없다. 그는 어제 휴가차 동해안으로 갔다." },
+            { ch: "CH6", no: 361, unit: "UNIT 35", eng: "Someone may have found your phone. Check the lost and found first.", struct: "Someone(S) + may have found(V) + your phone(O)", grammar: "may have p.p.: 과거 사건 사실에 대하여 불확실하게 어림잡아 추측(~했을지도 모른다)할 때 출현하는 과거 추측조동사입니다.", words: "found (find의 과거분사), lost and found (분실물 보관소)", kor: "누군가 당신의 전화를 찾았을지도 모른다. 먼저 분실물 보관소를 확인해라." },
+            { ch: "CH6", no: 362, unit: "UNIT 35", eng: "My alarm clock didn’t go off this morning. I must have forgotten to set it last night.", struct: "My alarm clock(S) + didn’t go off(V) ... I(S) + must have forgotten(V) + {to set it}(O)", grammar: "must have p.p. 강력 과거확신 & forget to-v: 과거 사실에 대한 99% 확신형 추측(~했음에 틀림없다)과 향후 행할 미이행 망각(forget to-v)의 결합입니다.", words: "go off (울리다), forget (잊다), set (맞추다)", kor: "오늘 아침에 내 알람 시계가 울리지 않았다. 내가 어젯밤에 그것을 맞춰두는 것을 잊었음에 틀림없다." },
+            { ch: "CH6", no: 363, unit: "UNIT 35", eng: "A comet may not have caused the extinction of the dinosaurs. There is no authentic proof of it.", struct: "A comet(S) + may not have caused(V) + the extinction... There + is(V) + no authentic proof(S)", grammar: "may not have p.p.: 과거에 유발된 사건에 대한 소극적 부정 추측(~하지 않았을지도 모른다)의 문맥을 방어합니다.", words: "comet (혜성), cause (야기하다), extinction (멸종), dinosaur (공룡), authentic (확실한), proof (증거)", kor: "혜성이 공룡의 멸종을 야기하지 않았을지도 모른다. 그것에 대한 확실한 증거는 없다." },
+            { ch: "CH6", no: 364, unit: "UNIT 35", eng: "He was very young then. Dealing with the sudden fame could have been difficult for him.", struct: "He(S) + was(V) ... {Dealing with the sudden fame}(S) + could have been(V) + difficult(C)", grammar: "could have p.p. 과거 가능성 & 동명사 주어: 과거 시점 상황에 비추어 볼 때 '충분히 그런 잠재 가능성이 성립했었다'를 역설하는 동명사구 주어절입니다.", words: "deal with (~을 다루다), sudden (갑작스러운), fame (명성)", kor: "그는 그때 매우 어렸다. 갑작스러운 명성에 대처하는 것은 그에게 어려웠을 수도 있다." },
+            { ch: "CH6", no: 365, unit: "UNIT 35", eng: "The exam was quite difficult. Susan cannot have gotten a perfect score.", struct: "The exam(S) + was(V) ... Susan(S) + cannot have gotten(V) + a perfect score(O)", grammar: "cannot have p.p. 과거 부정확신: 과거에 '결코 그런 대형 사건이 일어났을 리가 만무하다'를 논리적으로 못 박는 강경한 과거 추측입니다.", words: "quite (꽤), perfect score (만점)", kor: "시험이 꽤 어려웠다. 수잔이 만점을 받았을 리가 없다." },
+            // [정정 완료] 검토 과정에서 발견된 '나는 기' 한글 타이핑 오류를 '날기'로 신속히 교정 고정했습니다.
+            { ch: "CH6", no: 366, unit: "UNIT 35", eng: "Some small dinosaurs that did not fly had feathers. The feathers might have been for keeping warm, but not for flying.", struct: "Some small dinosaurs [that did not fly](S) + had(V) + feathers(O). The feathers(S) + might have been(V) ...", grammar: "might have p.p. 추측 & 동명사 병렬: 과거의 희박한 추측 형성이며 전치사 for 이하에 명사형 동명사 수식구 2개가 대조 병렬 배치되었습니다.", words: "feather (깃털), keep warm (따뜻하게 유지하다)", kor: "날지 못했던 몇몇 작은 공룡들은 깃털을 가지고 있었다. 그 깃털들은 보온을 위한 것이었을지도 모른다, 날기 위한 것이 아니라." },
+            { ch: "CH6", no: 367, unit: "UNIT 35", eng: "Your application is too late. You should have submitted it the day before yesterday.", struct: "Your application(S) + is(V) ... You(S) + should have submitted(V) + it(O) [the day before yesterday](M)", grammar: "should have p.p. 타인 비판형 후회: 과거에 미실행하여 무산된 사안에 관한 강인한 유감, 비토 후회(~했어야만 했다)를 소환하는 변별력 최상위 문법입니다.", words: "application (지원서), submit (제출하다), the day before yesterday (그저께)", kor: "당신의 지원서는 너무 늦었다. 당신은 그것을 그저께 제출했어야만 했다." },
+            { ch: "CH6", no: 368, unit: "UNIT 35", eng: "I was late for school this morning. I should have checked the bus schedule in advance.", struct: "I(S) + was(V) ... I(S) + should have checked(V) + the bus schedule(O) [in advance](M)", grammar: "should have p.p. 1인칭 자가 후회: 화자 본인이 과거 이행 못한 행동선에 관하여 통탄하거나 뉘우치는 기류를 발산합니다.", words: "late for (~에 늦은), schedule (시간표), in advance (미리, 사전에)", kor: "나는 오늘 아침에 학교에 지각했다. 나는 버스 시간표를 미리 확인했어야만 했다." },
+            { ch: "CH6", no: 369, unit: "UNIT 35", eng: "Why is she late? She ought to have arrived by now.", struct: "Why + is(V) + she(S) + late(C)? She(S) + ought to have arrived(V) [by now](M)", grammar: "ought to have p.p. 당연의 무산 후회: should의 대체제로 '상식상 진작에 벌써 도착해 귀결되었어야 정상인데 그러지 못했다'는 진한 유감을 표합니다.", words: "arrive (도착하다), by now (지금쯤은)", kor: "그녀는 왜 늦을까? 지금쯤은 도착했어야 했는데." },
+            { ch: "CH6", no: 370, unit: "UNIT 35", eng: "I shouldn’t have said it, but the words slipped out of my mouth.", struct: "I(S) + shouldn’t have said(V) + it(O), but + the words(S) + slipped out of(V) + my mouth(M)", grammar: "shouldn't have p.p. 강력 행동 후회: 과거에 이미 발현 저질러 버린 과오에 대한 뼈아픈 탄식 유감(~하지 말았어야 했다)을 정밀 묘사합니다.", words: "slip out of (~에서 미끄러져 나오다), mouth (입)", kor: "내가 그것을 말하지 말았어야 했는데, 그 말이 내 입 밖으로 불쑥 나와 버렸다." },
+            { ch: "CH6", no: 371, unit: "UNIT 35", eng: "You needn’t have come this early. The bookstore doesn’t open till 10 a.m.", struct: "You(S) + needn’t have come(V) [this early](M). The bookstore(S) + doesn’t open(V) [till 10 a.m.](M)", grammar: "needn't have p.p. 실리적 무용 후회: 과거에 '굳이 그럴 실익이나 필요가 전무했는데 이미 이행 완결해 버려 헛수고했다'는 정황 유감 진술입니다.", words: "early (일찍), bookstore (서점), till (~까지)", kor: "당신은 이렇게 일찍 올 필요가 없었는데 (이미 와 버렸다). 서점은 오전 10시까지는 열지 않는다." },
+            { ch: "CH6", no: 372, unit: "UNIT 35", eng: "If you spend time thinking about what you should have done, you lose valuable time for planning what you will do.", struct: "[If you spend time thinking about what you should have done](조건절), you(S) + lose(V) + valuable time(O)", grammar: "spend 시간 -ing & 명사절 what & should have p.p.: spend 관용구 내부에 관계대명사 명사절과 후회형 조동사가 중첩 결합된 역대급 고난도 문장 구조 스키마입니다.", words: "spend (보내다), think about (~에 대해 생각하다), valuable (가치 있는), plan (계획하다)", kor: "만약 당신이 당신이 했어야 했던 일들에 대해 생각하느라 시간을 보낸다면, 당신은 당신이 할 일을 계획하기 위한 소중한 시간을 잃게 된다." },
+            { ch: "CH6", no: 373, unit: "UNIT 36", eng: "Justice demands that there (should) be no discrimination against anybody.", struct: "Justice(S) + demands(V) + [that there (should) be no discrimination...](O명사절)", grammar: "주요명제 조동사 생략 (demand): 요구 동사의 목적어 주 명제 명사절에 당위성 속성(~해야 마땅하다)이 포함되어 조동사 should가 전격 탈락, 원형 be만 생존합니다.", words: "justice (정의), demand (요구하다), discrimination (차별), against (~에 대한)", kor: "정의는 누구에 대해서도 차별이 없어야 한다고 요구한다." },
+            { ch: "CH6", no: 374, unit: "UNIT 36", eng: "Life doesn’t require that we be the best, only that we try our best.", struct: "Life(S) + doesn’t require(V) + [that we (should) be...](O1) + only + [that we (should) try...](O2)", grammar: "요구 동사 require & 원형 병렬: require 뒤에 배치된 2개의 명사절 목적어구 모두 당위 속성을 함유하여 주어 뒤에 should가 소멸한 원형(be, try)이 각자 표출됩니다.", words: "require (요구하다), best (최선), try one's best (최선을 다하다)", kor: "인생은 우리가 최고가 되어야 한다고 요구하지 않고, 오직 우리가 최선을 다해야 한다고 요구할 뿐이다." },
+            { ch: "CH6", no: 375, unit: "UNIT 36", eng: "They suggest that young people stop wasting their money on unnecessary things and start saving it.", struct: "They(S) + suggest(V) + [that young people (should) stop... and start...](O명사절)", grammar: "제안 동사 suggest & 원형 병렬 & stop 동명사: suggest의 대명사절 목적어 내 원형 수립 조건 및 stop 뒤 동명사 목적어(wasting) 포진을 규정합니다.", words: "suggest (제안하다), waste (낭비하다), unnecessary (불필요한), save (저축하다)", kor: "그들은 젊은이들이 불필요한 것에 돈을 낭비하는 것을 멈추고 저축을 시작해야 한다고 제안한다." },
+            { ch: "CH6", no: 376, unit: "UNIT 36", eng: "I insist that every room be provided with a fire extinguisher.", struct: "I(S) + insist(V) + [that every room (should) be provided...](O명사절)", grammar: "주장 동사 insist의 당위성: 명사절 내용이 '마땅히 구비되어 있어야 성립한다'는 당위 속성이므로 조동사 should 생략 원형 수동태(be provided with)가 도출됩니다.", words: "insist (주장하다), provide A with B (A에게 B를 제공하다), fire extinguisher (소화기)", kor: "나는 모든 방에 소화기가 비치되어야 한다고 주장한다." },
+            { ch: "CH6", no: 377, unit: "UNIT 36", eng: "It is necessary that we consider other people before we act.", struct: "It(가S) + is(V) + necessary(C) + {that we (should) consider...}(진S)", grammar: "이성 판단의 형용사 necessary: 가주어 구문 보어 자리에 당연 성립의 당위 형용사 necessary가 투입되어 진주어 명사절 should가 자동 축소 탈락, 원형인 consider를 구사합니다.", words: "necessary (필수적인), consider (배려하다), act (행동하다)", kor: "우리가 행동하기 전에 다른 사람들을 배려하는 것은 필수적이다." },
+            { ch: "CH6", no: 378, unit: "UNIT 36", eng: "My suggestion is that children be careful in both how and how much they use their smartphones.", struct: "My suggestion(S) + is(V) + [that children (should) be careful...](C명사절)", grammar: "당위성 명사 주어 suggestion: 명사 suggestion(제안)이 보어 명사절을 조종하여 should가 생략된 원형 be가 발현되며, 상관접속사 both A and B가 속해 있습니다.", words: "suggestion (제안), careful (주의 깊은), both A and B (A와 B 둘 다)", kor: "나의 제안은 어린이들이 스마트폰을 사용하는 방식과 사용량 둘 다에 있어서 주의를 기울여야 한다는 것이다." },
+            { ch: "CH6", no: 379, unit: "UNIT 36", eng: "It’s my proposal that the government regulate fake news.", struct: "It(가S) + is(V) + my proposal(C) + {that the government (should) regulate fake news}(진S)", grammar: "당위 명사 proposal 진주어: 제안 제의의 명사 proposal이 진주어 종속 명사절의 조종간을 잡아 should가 유실된 원형 regulate(규제하다)가 출현합니다.", words: "proposal (제안), regulate (규제하다), fake news (가짜 뉴스)", kor: "정부가 가짜 뉴스를 규제해야 한다는 것이 나의 제안이다." },
+            { ch: "CH6", no: 380, unit: "UNIT 36", eng: "Health experts recommend that nuts be eaten regularly, as they are major sources of protein, minerals, and vitamins.", struct: "Health experts(S) + recommend(V) + [that nuts (should) be eaten...](O명사절)", grammar: "권고 동사 recommend & 원형 수동태: recommend절 내부 당위 규정 수동태 원형(be eaten)이 설립되었으며, 접속사 as는 이유 속성 부사절을 이끕니다.", words: "expert (전문가), recommend (권장하다), regularly (정기적으로), source (공급원), protein (단백질)", kor: "건강 전문가들은 견과류가 단백질, 미네랄, 그리고 비타민의 주요 공급원이기 때문에 정기적으로 섭취되어야 한다고 권장한다." },
+            { ch: "CH6", no: 381, unit: "UNIT 36", eng: "It is not so strange that worry should produce physical symptoms.", struct: "It(가S) + is(V) + not so strange(C) + {that worry + should produce...}(진S)", grammar: "감정 판단의 특수 should: 주관적 놀라움, 이상함의 평가 형용사 strange 뒤편의 should는 생략되지 않고 '~하다니'의 독특한 수사 어조를 형성합니다.", words: "strange (이상한), worry (걱정), produce (유발하다), physical (신체적인), symptom (증상)", kor: "걱정이 신체적 증상을 유발한다는 것은 그리 이상한 일이 아니다." },
+            { ch: "CH6", no: 382, unit: "UNIT 36", eng: "It is a shame that he should miss such a golden opportunity.", struct: "It(가S) + is(V) + a shame(C) + {that he + should miss...}(진S)", grammar: "유감 명사 격식 should: 가주어절 보어 자리에 아쉬움 명사구 a shame이 포진할 시 that 내부의 should는 유감적 감정 격식 의미(~하다니)를 가산합니다.", words: "a shame (유감스러운 일), miss (놓치다), golden opportunity (황금 같은 기회)", kor: "그가 그런 황금 같은 기회를 놓치다니 정말 유감스러운 일이다." },
+            { ch: "CH6", no: 383, unit: "UNIT 37", eng: "I would[used to] eat meat, but now I’m a vegetarian.", struct: "I(S) + would / used to eat(V) + meat(O) ..., I(S) + am(V) + a vegetarian(C)", grammar: "과거의 습관 조동사: 과거 시점선상의 정기적 행동 전력(~하곤 했었다)을 대변하며, 현재선 상에서는 단절되었음을 자인합니다.", words: "meat (고기), vegetarian (채식주의자)", kor: "나는 고기를 먹고는 했었으나, 지금은 채식주의자이다." },
+            { ch: "CH6", no: 384, unit: "UNIT 37", eng: "He used to put on weight every winter until he started skiing.", struct: "He(S) + used to put on(V) + weight(O) ... + [until he started skiing](M)", grammar: "과거의 지속적 상태 used to & start 동명사: 과거 고정 습성을 가리키며, until 부사절 내부의 타동사 start는 동명사(skiing) 목적어와 합작합니다.", words: "put on weight (살이 찌다), winter (겨울), start (시작하다)", kor: "그는 스키를 타기 시작할 때까지는 겨울마다 살이 찌고는 했었다." },
+            { ch: "CH6", no: 385, unit: "UNIT 37", eng: "Where did you use to live before you moved here?", struct: "Where + did + you(S) + use to live(V) + [before you moved here](M)?", grammar: "used to 의문문 체계: 일반 동사 의문 구조 식을 빌려 출현하므로 'did + 주어 + use to + 원형' 어순 체계를 철저히 준수합니다.", words: "live (살다), move (이사하다)", kor: "당신은 여기로 이사 오기 전에 어디에 살았었습니까?" },
+            { ch: "CH6", no: 386, unit: "UNIT 37", eng: "We would like to thank you for your suggestion about introducing more employee wellness programs.", struct: "We(S) + would like to thank(V) + you(O) + [for your suggestion...](M)", grammar: "would like to-v: '~하고 싶다' 소망의 문맥을 정중히 공표하는 비즈니스 표준 숙어구이며, 전치사 about 뒤 동명사가 결합했습니다.", words: "thank A for B (A에게 B에 대해 감사하다), introduce (도입하다), employee (직원), wellness (복지)", kor: "더 많은 직원 복지 프로그램을 도입하는 것에 대한 당신의 제안에 감사드리고 싶습니다." },
+            { ch: "CH6", no: 387, unit: "UNIT 37", eng: "I’d rather attempt to do something great and fail than attempt to do nothing and succeed.", struct: "I(S) + ’d rather attempt(V1) ... than + attempt(V2) ... and succeed", grammar: "would rather A than B: 선호도 비교문으로, 'B하느니 차라리 원형 A 행동을 단행하겠다'라는 대조 병렬 수사학입니다.", words: "would rather (차라리 ~하겠다), attempt to-v (~하려고 시도하다), fail (실패하다), succeed (성공하다)", kor: "나는 아무것도 하지 않고 성공하느니, 차라리 위대한 일을 시도해보고 실패하는 편을 택하겠다." },
+            { ch: "CH6", no: 388, unit: "UNIT 37", eng: "If you have to have a dream, you may as well dream big.", struct: "[If you have to...](조건절), you(S) + may as well dream(V) [big](M)", grammar: "may as well 원형: 현 상황 여건을 고려 가늠할 때 '그 명제 행동을 단행하는 편이 차라리 합리적이고 낫다'는 실리 권유 표현식입니다.", words: "have to (~해야 한다), dream big (꿈을 크게 가지다)", kor: "만약 당신이 꿈을 가져야만 한다면, 꿈을 크게 가지는 편이 나을 것이다." },
+            { ch: "CH6", no: 389, unit: "UNIT 37", eng: "When I hear great music, I can’t help being inspired by it.", struct: "[When I hear...](M), I(S) + can’t help being inspired(V) [by it](M)", grammar: "cannot help -ing 수동형: '~하지 않을 수 없다' 관용틀 내부 동명사가 수동태(being inspired) 복합형으로 정립되어 감화 상태의 강제성을 보여줍니다.", words: "hear (듣다), cannot help -ing (~하지 않을 수 없다), inspire (영감을 주다)", kor: "위대한 음악을 들을 때, 나는 그 음악에 의해 영감을 받지 않을 수 없다." },
+            { ch: "CH6", no: 390, unit: "UNIT 37", eng: "Parents cannot be too careful about their words and actions before their children.", struct: "Parents(S) + cannot be too careful(V) [about their words and actions...](M)", grammar: "cannot ~ too ... 강조 표현: '아무리 과하게 신중을 기해도 지나치지 않고 지당하다'는 최상급 강조 당위의 관용 대조틀입니다.", words: "careful (조심하는), word (말), action (행동), before (~앞에서)", kor: "부모는 자녀 앞에서 그들의 말과 행동에 대해 아무리 신중해도 지나치지 않다." },
+            { ch: "CH6", no: 391, unit: "UNIT 37", eng: "Books may well be the only true magic.", struct: "Books(S) + may well be(V) + the only true magic(C)", grammar: "may well 추측성: 현재 주격 상태에 근거하여 볼 때 '아마 당연히 높은 확률로 ~일 것이다'라는 타당성 높은 개연성 추측입니다.", words: "true (진정한), magic (마법)", kor: "책은 아마 진정한 유일한 마법일 것이다." },
+            { ch: "CH6", no: 392, unit: "UNIT 37", eng: "You may as well know nothing as know things by halves.", struct: "You(S) + may as well know(V1) nothing + as + know(V2) things [by halves](M)", grammar: "may as well A as B: 조동사 관용 숙어의 원형 상관 비교급으로, 'B하느니 원형 A하는 것이 전적으로 이롭고 낫다'는 훈계형 속성 구문입니다.", words: "know nothing (아무것도 모르다), by halves (어설프게, 반쯤만)", kor: "어설프게 아는 것보다는 차라리 아무것도 모르는 편이 낫다." },
+            { ch: "CH6", no: 393, unit: "UNIT 37", eng: "Whenever I meet homeless dogs and cats, I can’t help but feel sorry for them.", struct: "[Whenever I meet...](부사절), I(S) + can’t help but feel(V) + sorry(C) [for them](M)", grammar: "cannot help but + 동사원형: '~하지 않을 수 없다' 숙어로 No.389의 동명사 형상을 원형 feel 구조체로 상호 스위칭 치환한 형태입니다.", words: "whenever (~할 때마다), homeless (유기된), feel sorry for (~을 안타깝게 여기다)", kor: "집 없는 개와 고양이들을 만날 때마다, 나는 그들을 안타깝게 여기지 않을 수 없다." },
+            { ch: "CH6", no: 394, unit: "UNIT 37", eng: "I would like to give you some useful tips on how to learn efficiently.", struct: "I(S) + would like to give(V) + you(O1) + some useful tips(O2) + [on how to learn...](M)", grammar: "would like to 소망 & 4형식 & 의문사구: 수여동사 give의 간접 목적어 직접 목적어 4형식 축 뒤에 명사구 [how + to부정사](~하는 방법)가 유도 결합되었습니다.", words: "useful (유용한), tip (조언), efficiently (효율적으로), learn (배우다)", kor: "나는 당신에게 효율적으로 배우는 방법에 대한 몇 가지 유용한 조언을 드리고 싶습니다." }
         ];
 
-        // 상태 변수
+        // 글로벌 코어 상징자 세션
+        let currentChSelection = "CH5"; 
         let currentTab = "ALL";
         let activeMode = "study";
         let searchQuery = "";
         let filterOnlyBookmarks = false;
         
-        let checkedCompleted = JSON.parse(localStorage.getItem('gramva_completed_v2')) || [];
-        let bookmarkedList = JSON.parse(localStorage.getItem('gramva_bookmarks_v2')) || [];
-        let writingNotes = JSON.parse(localStorage.getItem('gramva_notes_v2')) || {};
+        let checkedCompleted = JSON.parse(localStorage.getItem('gramva_completed_v4')) || [];
+        let bookmarkedList = JSON.parse(localStorage.getItem('gramva_bookmarks_v4')) || [];
+        let writingNotes = JSON.parse(localStorage.getItem('gramva_notes_v4')) || {};
 
         let currentQuizIndex = 0;
         let quizQuestions = [];
         let modalConfirmCallback = null;
 
         window.onload = function() {
-            renderTabs();
+            rebuildNavigationTabs();
             renderCards();
             updateTotalProgress();
         }
 
-        function renderTabs() {
+        function changeChapter(chCode) {
+            currentChSelection = chCode;
+            currentTab = "ALL"; 
+            rebuildNavigationTabs();
+            if (activeMode !== "study") switchMode("study");
+            renderCards();
+        }
+
+        function rebuildNavigationTabs() {
             const tabsContainer = document.getElementById("tabs-container");
-            const units = ["ALL", "UNIT 27", "UNIT 28", "UNIT 29", "UNIT 30", "UNIT 31"];
-            
             tabsContainer.innerHTML = "";
-            units.forEach(unit => {
+
+            const allUnitsInCh = [...new Set(sentencesDb.filter(s => s.ch === currentChSelection).map(s => s.unit))];
+            const unitsMenu = ["ALL", ...allUnitsInCh];
+
+            unitsMenu.forEach(unit => {
                 const button = document.createElement("button");
                 button.className = `px-4 py-1.5 rounded-full text-xs font-black transition-all shrink-0 whitespace-nowrap ${
                     currentTab === unit 
@@ -259,23 +332,23 @@
                 button.onclick = () => {
                     currentTab = unit;
                     if (activeMode !== "study") switchMode("study");
-                    renderTabs();
+                    rebuildNavigationTabs();
                     renderCards();
                 };
                 tabsContainer.appendChild(button);
             });
         }
 
-        // [리팩토링] 안전한 이벤트를 지향하는 카드 렌더링 카드 엔진
         function renderCards() {
             const cardsList = document.getElementById("cards-list");
             cardsList.innerHTML = "";
 
             const filtered = sentencesDb.filter(item => {
+                const matchesCh = (item.ch === currentChSelection);
                 const matchesTab = (currentTab === "ALL" || item.unit === currentTab);
                 const matchesSearch = item.eng.toLowerCase().includes(searchQuery.toLowerCase()) || item.kor.includes(searchQuery);
                 const matchesBookmark = !filterOnlyBookmarks || bookmarkedList.includes(item.no);
-                return matchesTab && matchesSearch && matchesBookmark;
+                return matchesCh && matchesTab && matchesSearch && matchesBookmark;
             });
 
             if (filtered.length === 0) {
@@ -343,7 +416,7 @@
 
                         <div class="border border-slate-100 rounded-xl overflow-hidden">
                             <button onclick="toggleAccordion(this)" class="w-full bg-slate-50 hover:bg-slate-100/80 px-3 py-2.5 flex justify-between items-center text-xs font-bold text-slate-600 transition-all">
-                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-spell-check text-amber-500"></i> 고난도 필수 단어장</span>
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-spell-check text-amber-500"></i> 어휘 분석 단어장</span>
                                 <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200 accordion-icon"></i>
                             </button>
                             <div class="hidden p-3 bg-white border-t border-slate-50 text-xs">
@@ -374,7 +447,6 @@
             });
         }
 
-        // [패치] 상대참조 기법을 사용한 범용 아코디언 애니메이터 (버그 원천 소멸)
         function toggleAccordion(button) {
             const content = button.nextElementSibling;
             const icon = button.querySelector(".accordion-icon");
@@ -387,7 +459,6 @@
             }
         }
 
-        // [패치] 시제 DB 룩업 캡슐화 연동형 발음 처리기 (작은따옴표 유실 완전 차단)
         function speakText(no) {
             const targetItem = sentencesDb.find(s => s.no === no);
             if (!targetItem) return;
@@ -414,9 +485,9 @@
                 bookmarkedList.splice(idx, 1);
             } else {
                 bookmarkedList.push(no);
-                showModal("보관함 추가", "해당 구문이 복습 북마크 보관함에 등록되었습니다.", "fa-circle-check");
+                showModal("보관함 추가", "해당 문장이 학습 보관함 서랍에 등록되었습니다.", "fa-circle-check");
             }
-            localStorage.setItem('gramva_bookmarks_v2', JSON.stringify(bookmarkedList));
+            localStorage.setItem('gramva_bookmarks_v4', JSON.stringify(bookmarkedList));
             renderCards();
             updateTotalProgress();
         }
@@ -444,14 +515,14 @@
             } else {
                 checkedCompleted.push(no);
             }
-            localStorage.setItem('gramva_completed_v2', JSON.stringify(checkedCompleted));
+            localStorage.setItem('gramva_completed_v4', JSON.stringify(checkedCompleted));
             renderCards();
             updateTotalProgress();
         }
 
         function saveNote(no, value) {
             writingNotes[no] = value;
-            localStorage.setItem('gramva_notes_v2', JSON.stringify(writingNotes));
+            localStorage.setItem('gramva_notes_v4', JSON.stringify(writingNotes));
         }
 
         function updateTotalProgress() {
@@ -494,15 +565,15 @@
 
         function startQuizSession() {
             currentQuizIndex = 0;
-            let pool = sentencesDb;
+            let pool = sentencesDb.filter(s => s.ch === currentChSelection);
             if (currentTab !== "ALL") {
-                pool = sentencesDb.filter(i => i.unit === currentTab);
+                pool = pool.filter(i => i.unit === currentTab);
             }
 
             quizQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, 10);
             if (quizQuestions.length < 4) {
-                quizQuestions = [...sentencesDb].sort(() => 0.5 - Math.random()).slice(0, 10);
-                showModal("범위 자동 변경", "지정 단원의 문장 개수가 충족되지 않아 챕터 전체에서 퀴즈가 엄선되었습니다.", "fa-circle-info");
+                quizQuestions = sentencesDb.filter(s => s.ch === currentChSelection).sort(() => 0.5 - Math.random()).slice(0, 10);
+                showModal("출제 풀 확장", "해당 단원의 문장 개수가 소량이어서 챕터 전체 문장 중 무작위 엄선으로 테스트가 대체 구성되었습니다.", "fa-circle-info");
             }
             loadQuizQuestion();
         }
@@ -519,8 +590,9 @@
             document.getElementById("quiz-next-btn").classList.add("hidden");
 
             const correctKor = currentQ.kor;
+            
             const wrongs = sentencesDb
-                .filter(i => i.no !== currentQ.no)
+                .filter(i => i.ch === currentChSelection && i.no !== currentQ.no)
                 .sort(() => 0.5 - Math.random())
                 .slice(0, 3)
                 .map(i => i.kor);
@@ -552,11 +624,11 @@
 
             if (chosenText === correctText) {
                 selectedBtn.classList.add("bg-emerald-50", "border-emerald-500", "text-emerald-700");
-                feedback.innerText = "🎉 정답입니다! 훌륭한 구문 해석력입니다.";
+                feedback.innerText = "🎉 정답입니다! 아주 훌륭한 구문 해석력입니다.";
                 feedback.className = "block mt-4 p-3 rounded-xl text-center font-bold text-xs bg-emerald-100 text-emerald-800 border border-emerald-200";
             } else {
                 selectedBtn.classList.add("bg-red-50", "border-red-400", "text-red-700");
-                feedback.innerText = "😅 오답입니다. 오답 문장을 학습방에서 다시 확인하세요.";
+                feedback.innerText = "😅 틀렸습니다. 오답 카드의 어휘 분석창을 재확인하세요.";
                 feedback.className = "block mt-4 p-3 rounded-xl text-center font-bold text-xs bg-red-100 text-red-800 border border-red-200";
             }
             document.getElementById("quiz-next-btn").classList.remove("hidden");
@@ -572,12 +644,11 @@
                 currentQuizIndex++;
                 loadQuizQuestion();
             } else {
-                showModal("퀴즈 완주 달성", "성공적으로 모든 퀴즈 세션을 수료하셨습니다.", "fa-circle-check");
+                showModal("단원 정복 완료", "축하합니다! 무작위 10문항 해석 검정 퀴즈를 모두 완료하였습니다.", "fa-circle-check");
                 switchMode("study");
             }
         }
 
-        // [패치] 모바일 브라우저 먹통 현상을 막는 비동기식 커스텀 컨펌 대화 메커니즘
         function showCustomConfirm(title, msg, onConfirm) {
             document.getElementById("modal-title").innerText = title;
             document.getElementById("modal-message").innerText = msg;
@@ -616,24 +687,24 @@
             modalConfirmCallback = null;
         }
 
-        // [패치] 모바일 차단 브레이크 해제형 초기화 모듈
         function resetAllProgress() {
             showCustomConfirm(
-                "데이터 포맷", 
-                "정말로 모든 학습 진도 상태와 작성 노트를 영구적으로 초기화하시겠습니까?", 
+                "전체 기록 리셋", 
+                "정말로 CHAPTER 05 및 06 전체 단원의 학습 완료 상태, 보관함 정보, 나만의 해석 연습장 작성 데이터를 완전히 공장 초기화하시겠습니까?", 
                 function() {
                     checkedCompleted = [];
                     bookmarkedList = [];
                     writingNotes = {};
-                    localStorage.removeItem('gramva_completed_v2');
-                    localStorage.removeItem('gramva_bookmarks_v2');
-                    localStorage.removeItem('gramva_notes_v2');
-                    renderTabs();
+                    localStorage.removeItem('gramva_completed_v4');
+                    localStorage.removeItem('gramva_bookmarks_v4');
+                    localStorage.removeItem('gramva_notes_v4');
+                    
+                    rebuildNavigationTabs();
                     renderCards();
                     updateTotalProgress();
                     
                     setTimeout(() => {
-                        showModal("초기화 완료", "모든 로컬 학습 정보가 안전하게 제거되었습니다.", "fa-circle-check");
+                        showModal("초기화 완료", "통합 플랫폼 내부 저장 캐시 데이터가 안전하게 포맷되었습니다.", "fa-circle-check");
                     }, 150);
                 }
             );
